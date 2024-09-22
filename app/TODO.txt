@@ -1,0 +1,13 @@
+make ui components
+    ui layer
+    ui elements
+        Composable functions
+        ViewModels
+        udf
+
+
+store login data and matches
+    make data layers and domain layer
+    MatchRepo
+    UserRepo
+
