@@ -11,8 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.example.chessfrontend.data.DataStore.storeCredentials
-import com.example.chessfrontend.ui.MainMenuActivity
 import com.example.chessfrontend.ui.LoginNavHost
+import com.example.chessfrontend.ui.MainMenuActivity
 import com.example.chessfrontend.ui.theme.ChessFrontEndTheme
 import com.example.chessfrontend.ui.viewmodels.LoginViewModel
 import com.example.chessfrontend.ui.viewmodels.RegisterViewModel

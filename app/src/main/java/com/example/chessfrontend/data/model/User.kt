@@ -1,6 +1,5 @@
 package com.example.chessfrontend.data.model
 
-import androidx.core.app.NotificationCompat.MessagingStyle.Message
 import kotlinx.serialization.Serializable
 
 @Serializable
