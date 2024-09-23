@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.components.CustomButton
-import com.example.chessfrontend.ui.components.PasswordField
 import com.example.chessfrontend.ui.components.FormHeading
 import com.example.chessfrontend.ui.components.MyClickableText
 import com.example.chessfrontend.ui.components.MyToast
+import com.example.chessfrontend.ui.components.PasswordField
 import com.example.chessfrontend.ui.components.UserNameField
 import com.example.chessfrontend.ui.viewmodels.LoginAction
 import com.example.chessfrontend.ui.viewmodels.LoginUiState

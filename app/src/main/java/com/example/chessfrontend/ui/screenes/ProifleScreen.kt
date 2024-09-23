@@ -18,14 +18,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.components.CustomButton
 import com.example.chessfrontend.ui.components.FormHeading
-import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 import com.example.chessfrontend.ui.viewmodels.ProfileUiState
+import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 
 @Composable
 fun ProfileScreenRoot(
     onNavigationToFriendList: () -> Unit,
     onNavigationToGames: () -> Unit,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     ProfileScreen(
         onNavigationToFriendList = onNavigationToFriendList,

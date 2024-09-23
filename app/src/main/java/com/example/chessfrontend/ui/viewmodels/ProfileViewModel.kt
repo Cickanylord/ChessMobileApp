@@ -1,5 +1,6 @@
 package com.example.chessfrontend.ui.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.chessfrontend.netwrok.ChessApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,16 +19,32 @@ class ProfileViewModel @Inject constructor(
         private set
 
     init {
-        viewModelScope.launch {
-            chessApiService.getProfile()
-            uiState = uiState.copy(
-                userName = chessApiService.getProfile().name,
-                email
-               = chessApiService.getProfile().name
+        loadData()
+    }
 
-            )
+    fun handleAction(action: ProfileAction) {
+        when (action) {
+            is ProfileAction.LoadData -> loadData()
         }
     }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            try {
+                val profile = chessApiService.getProfile()
+                uiState = uiState.copy(
+                    userName = profile.name,
+                    email = profile.name
+                )
+            } catch (e: Exception) {
+                Log.e("FriendListViewModel", "Error loading data", e)
+            }
+        }
+    }
+}
+
+sealed interface ProfileAction {
+    data object LoadData : ProfileAction
 }
 
 data class ProfileUiState(
