@@ -1,30 +1,22 @@
 package com.example.chessfrontend.ui.components
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.content.MediaType.Companion.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.R
-import com.example.chessfrontend.ui.viewmodels.BoardAction
-import com.example.chessfrontend.ui.viewmodels.BoardUiState
-import com.example.chessfrontend.ui.viewmodels.BoardViewModel
+import com.example.chessfrontend.ui.viewmodels.gameModes.BoardAction
+import com.example.chessfrontend.ui.viewmodels.gameModes.BoardUiState
+import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModel
 import com.hu.bme.aut.chess.ai_engine.board.BoardData
 import com.hu.bme.aut.chess.ai_engine.board.pieces.enums.PieceColor
 import com.hu.bme.aut.chess.ai_engine.board.pieces.enums.PieceName
@@ -66,12 +58,12 @@ private fun BoardScreenContent(
                                 .clickable {
                                     val pos = Pair(i,j)
 
-                                    state.board.getPiece(pos)?.let { piece ->
-                                        onAction(BoardAction.PieceClicked(piece))
-                                    }
-
                                     if(state.legalMoves.contains(pos)) {
                                         onAction(BoardAction.Step(pos))
+                                    } else {
+                                        state.board.getPiece(pos)?.let { piece ->
+                                            onAction(BoardAction.PieceClicked(piece))
+                                        }
                                     }
                                 }
                         ) {

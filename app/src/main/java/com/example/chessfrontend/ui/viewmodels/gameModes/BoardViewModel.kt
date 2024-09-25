@@ -1,4 +1,4 @@
-package com.example.chessfrontend.ui.viewmodels
+package com.example.chessfrontend.ui.viewmodels.gameModes
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -7,12 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.hu.bme.aut.chess.ai_engine.board.BoardData
 import com.hu.bme.aut.chess.ai_engine.board.pieces.peice_interface.Piece
-import dagger.hilt.android.lifecycle.HiltViewModel
 
-class BoardViewModel: ViewModel()  {
+open class BoardViewModel: ViewModel()  {
     var uiState by mutableStateOf(BoardUiState())
 
-    fun handleAction(action: BoardAction) {
+    open fun handleAction(action: BoardAction) {
         when (action) {
             is BoardAction.Step -> step(action.move)
             is BoardAction.PieceClicked -> pieceClicked(action.piece)
@@ -23,7 +22,6 @@ class BoardViewModel: ViewModel()  {
      *  This function gets the available steps when a piece is clicked.
      *
      *  @param piece the piece which is clicked
-     *
      */
     private fun pieceClicked(piece: Piece) {
         uiState.let { state ->
@@ -37,6 +35,12 @@ class BoardViewModel: ViewModel()  {
 
     }
 
+    /**
+     *  This function moves the chosen piece to the chosen tile.
+     *
+     *  @param move the tile which is chosen to step on
+     */
+
     private fun step(move: Pair<Int, Int>) {
         uiState.let { state ->
             state.board.boardLogic.move(state.clickedPiece!!, move)
@@ -45,7 +49,6 @@ class BoardViewModel: ViewModel()  {
                 legalMoves = listOf()
             )
         }
-        Log.d("BoardViewModel", "legal moves: ${uiState.board.toString()}")
     }
 
 }

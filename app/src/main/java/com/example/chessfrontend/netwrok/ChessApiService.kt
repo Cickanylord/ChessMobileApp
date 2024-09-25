@@ -4,6 +4,7 @@ import com.example.chessfrontend.data.model.Token
 import com.example.chessfrontend.data.model.User
 import com.example.chessfrontend.data.model.UserAuth
 import com.example.chessfrontend.data.model.UserPost
+import com.example.chessfrontend.ui.viewmodels.gameModes.FenDTO
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -20,4 +21,7 @@ interface ChessApiService {
 
     @GET("/api/user/friends")
     suspend fun getFriends(): List<User>
+
+    @POST("/api/chess/ai/fen")
+    suspend fun getAi(@Body fen: FenDTO): FenDTO
 }

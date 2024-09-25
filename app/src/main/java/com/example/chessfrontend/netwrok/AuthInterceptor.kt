@@ -17,8 +17,8 @@ class AuthInterceptor(@ApplicationContext private val context: Context) : Interc
         val requestBuilder = chain.request().newBuilder()
 
         if (original.url.encodedPath.contains("/auth")
-        ) {
-
+            || original.url.encodedPath.contains("/ai")
+            ) {
             return  chain.proceed(original)
         }
 

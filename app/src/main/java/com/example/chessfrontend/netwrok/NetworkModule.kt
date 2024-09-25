@@ -12,6 +12,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 private const val BASE_URL: String = "http://192.168.0.89:8080/api/"
@@ -29,6 +30,9 @@ object NetworkModule {
          return OkHttpClient.Builder()
              .addInterceptor(authInterceptor)
              .addInterceptor(logging)
+             .connectTimeout(130, TimeUnit.SECONDS)  // Adjust connection timeout
+             .readTimeout(130, TimeUnit.SECONDS)     // Adjust read timeout
+             .writeTimeout(130, TimeUnit.SECONDS)
              .build()
      }
 
