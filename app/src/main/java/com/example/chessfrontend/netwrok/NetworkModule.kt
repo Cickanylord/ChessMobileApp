@@ -1,11 +1,10 @@
 package com.example.chessfrontend.netwrok
 
-import android.content.Context
+import com.example.chessfrontend.data.DataStoreService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -55,8 +54,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(@ApplicationContext context: Context): AuthInterceptor {
-        return AuthInterceptor(context)
+    fun provideAuthInterceptor(dataStoreService: DataStoreService): AuthInterceptor {
+        return AuthInterceptor(dataStoreService)
     }
 }
 

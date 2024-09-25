@@ -10,9 +10,9 @@ import androidx.compose.material3.Scaffold
 import com.example.chessfrontend.ui.components.BoardScreenRoot
 import com.example.chessfrontend.ui.components.FormHeading
 import com.example.chessfrontend.ui.theme.ChessFrontEndTheme
-import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModel
 import com.example.chessfrontend.ui.viewmodels.FriendListViewModel
 import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
+import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 

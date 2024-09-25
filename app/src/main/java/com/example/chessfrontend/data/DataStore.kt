@@ -1,25 +1,24 @@
 package com.example.chessfrontend.data
 
 import android.content.Context
-
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.chessfrontend.data.model.Credentials
 import com.example.chessfrontend.data.model.Token
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-data class Credentials(val username: String, val password: String)
 
-object DataStore {
+class DataStoreService(@ApplicationContext private val context: Context) {
     private val Context._dataStore: DataStore<Preferences> by preferencesDataStore("APP_PREFERENCES")
 
 
     suspend fun storeCredentials(
-        context: Context,
         username: String,
         password: String,
         token: String
@@ -32,7 +31,7 @@ object DataStore {
         }
     }
 
-    fun getCredentials(context: Context): Flow<Credentials> =
+    fun getCredentials(): Flow<Credentials> =
         context._dataStore.data.map { preferences ->
         Credentials(
             username = preferences[PreferencesKeys.USERNAME] ?: "",
@@ -40,7 +39,7 @@ object DataStore {
         )
     }
 
-    fun getToken(context: Context): Flow<Token> =
+    fun getToken(): Flow<Token> =
         context._dataStore.data.map { preferences ->
             Token(
                 accessToken = preferences[PreferencesKeys.TOKEN] ?: ""
@@ -49,8 +48,8 @@ object DataStore {
 
 
 
-    suspend fun isLoggedIn(context: Context): Boolean {
-        return getToken(context).first().accessToken != ""
+    suspend fun isLoggedIn(): Boolean {
+        return getToken().first().accessToken != ""
     }
 
     object PreferencesKeys {
