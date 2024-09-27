@@ -1,7 +1,7 @@
-package com.example.chessfrontend.netwrok
+package com.example.chessfrontend.di
 
 import android.util.Log
-import com.example.chessfrontend.data.DataStoreService
+import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -9,7 +9,7 @@ import okhttp3.Response
 
 
 class AuthInterceptor(
-    private val dataStoreService: DataStoreService
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -22,7 +22,7 @@ class AuthInterceptor(
             return  chain.proceed(original)
         }
 
-        val token = runBlocking { dataStoreService.getToken().first().accessToken }
+        val token = runBlocking { userPreferencesRepository.getToken().first().accessToken }
 
         Log.d("AuthInterceptor", "Token: $token")
 

@@ -52,6 +52,7 @@ android {
     }
 }
 
+
 kapt {
     correctErrorTypes = true
 }
@@ -107,5 +108,8 @@ dependencies {
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    //chess engine
+    implementation ("com.aut.bme.chessAI:ChessAi:1.0")
 }
 

@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chessfrontend.data.model.UserPost
-import com.example.chessfrontend.netwrok.ChessApiService
+import com.example.chessfrontend.data.netwrok.ChessApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

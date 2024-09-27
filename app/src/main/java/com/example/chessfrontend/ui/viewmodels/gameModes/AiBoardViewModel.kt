@@ -1,18 +1,21 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
+import ai_engine.board.pieces.peice_interface.Piece
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.chessfrontend.netwrok.ChessApiService
-import com.hu.bme.aut.chess.ai_engine.board.BoardData
-import com.hu.bme.aut.chess.ai_engine.board.pieces.peice_interface.Piece
+import com.auth.bme.chess.ai_engine.board.BoardData
+import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.netwrok.ChessApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 @HiltViewModel
 class AiBoardViewModel @Inject constructor(
-    private val chessApiService: ChessApiService
+    private val chessApiService: ChessApiService,
+    private val userPreferencesRepository: UserPreferencesRepository
 ): BoardViewModel() {
 
     override fun handleAction(action: BoardAction) {
@@ -26,6 +29,7 @@ class AiBoardViewModel @Inject constructor(
         super.handleAction(BoardAction.Step(move))
         viewModelScope.launch {
             try {
+                Log.d("AiBoardViewModel", userPreferencesRepository.getToken().first().accessToken)
                 val response = chessApiService.getAi(FenDTO(uiState.board.fen.toString()))
                 Log.d("AiBoardViewModel", response.toString())
                 uiState = uiState.copy(

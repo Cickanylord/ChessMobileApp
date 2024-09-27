@@ -1,4 +1,4 @@
-package com.example.chessfrontend.netwrok
+package com.example.chessfrontend.data.netwrok
 
 import com.example.chessfrontend.data.model.Token
 import com.example.chessfrontend.data.model.User

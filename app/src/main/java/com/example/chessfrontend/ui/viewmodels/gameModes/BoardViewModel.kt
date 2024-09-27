@@ -1,11 +1,11 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
+import ai_engine.board.pieces.peice_interface.Piece
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.hu.bme.aut.chess.ai_engine.board.BoardData
-import com.hu.bme.aut.chess.ai_engine.board.pieces.peice_interface.Piece
+import com.auth.bme.chess.ai_engine.board.BoardData
 
 open class BoardViewModel: ViewModel()  {
     var uiState by mutableStateOf(BoardUiState())

@@ -1,4 +1,4 @@
-package com.example.chessfrontend.data
+package com.example.chessfrontend.data.localStorage
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -12,13 +12,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 
-class DataStoreService(@ApplicationContext private val context: Context) {
+class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): UserPreferencesRepository {
     private val Context._dataStore: DataStore<Preferences> by preferencesDataStore("APP_PREFERENCES")
 
-
-    suspend fun storeCredentials(
+    override suspend fun storeCredentials(
         username: String,
         password: String,
         token: String
@@ -31,7 +31,7 @@ class DataStoreService(@ApplicationContext private val context: Context) {
         }
     }
 
-    fun getCredentials(): Flow<Credentials> =
+    override fun getCredentials(): Flow<Credentials> =
         context._dataStore.data.map { preferences ->
         Credentials(
             username = preferences[PreferencesKeys.USERNAME] ?: "",
@@ -39,7 +39,7 @@ class DataStoreService(@ApplicationContext private val context: Context) {
         )
     }
 
-    fun getToken(): Flow<Token> =
+    override fun getToken(): Flow<Token> =
         context._dataStore.data.map { preferences ->
             Token(
                 accessToken = preferences[PreferencesKeys.TOKEN] ?: ""
@@ -47,8 +47,7 @@ class DataStoreService(@ApplicationContext private val context: Context) {
         }
 
 
-
-    suspend fun isLoggedIn(): Boolean {
+    override suspend fun isLoggedIn(): Boolean {
         return getToken().first().accessToken != ""
     }
 

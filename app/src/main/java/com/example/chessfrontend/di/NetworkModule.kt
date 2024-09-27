@@ -1,6 +1,7 @@
-package com.example.chessfrontend.netwrok
+package com.example.chessfrontend.di
 
-import com.example.chessfrontend.data.DataStoreService
+import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -54,8 +55,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(dataStoreService: DataStoreService): AuthInterceptor {
-        return AuthInterceptor(dataStoreService)
+    fun provideAuthInterceptor(userPreferencesRepository: UserPreferencesRepository): AuthInterceptor {
+        return AuthInterceptor(userPreferencesRepository)
     }
 }
-
