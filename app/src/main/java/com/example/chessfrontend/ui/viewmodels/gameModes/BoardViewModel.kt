@@ -1,14 +1,44 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
-import ai_engine.board.pieces.peice_interface.Piece
+import ai_engine.ai.NewAI
+import ai_engine.board.pieces.Piece
+import ai_engine.board.pieces.enums.PieceColor
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.auth.bme.chess.ai_engine.board.BoardData
+import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-open class BoardViewModel: ViewModel()  {
+@HiltViewModel
+open class BoardViewModel @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+): ViewModel()  {
     var uiState by mutableStateOf(BoardUiState())
+
+    init {
+        loadBoard()
+    }
+
+    private fun loadBoard() {
+        viewModelScope.launch {
+            userPreferencesRepository
+                .getOfflineGame()
+                .collect { fen ->
+                    uiState = if (fen == "") {
+                        BoardUiState()
+                    } else {
+                        uiState.copy(
+                            board = BoardData(fen)
+                        )
+                    }
+                }
+        }
+    }
 
     open fun handleAction(action: BoardAction) {
         when (action) {
@@ -48,7 +78,21 @@ open class BoardViewModel: ViewModel()  {
                 legalMoves = listOf()
             )
         }
+        viewModelScope.launch {
+            userPreferencesRepository.saveOfflineGame(uiState.board.fen.toString())
+            val ai = NewAI(PieceColor.BLACK, uiState.board)
+            val nextStep = ai.getTheNextStep()
+            uiState.board.boardLogic.move(nextStep.first, nextStep.second)
+
+            uiState = uiState.copy(
+                clickedPiece = null,
+                legalMoves = listOf()
+            )
+        }
     }
+
+
+
 
 }
 sealed interface BoardAction {

@@ -13,7 +13,10 @@ import com.example.chessfrontend.ui.components.CustomButton
 
 @Composable
 fun MainMenuContent(
-    onNavigationToProfile: () -> Unit = {}
+    onNavigationToProfile: () -> Unit = {},
+    onNavigationToOnlineGame: () -> Unit = {},
+    onNavigationToOfflineGame: () -> Unit = {},
+    onNavigationToAiGame: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -24,15 +27,15 @@ fun MainMenuContent(
     ) {
         CustomButton(
             text = "Online Game",
-            onClick = { /* Handle play game button click */ }
+            onClick = { onNavigationToOnlineGame() }
         )
         CustomButton(
             text = "Offline Game",
-            onClick = { /* Handle offline game button click */ }
+            onClick = { onNavigationToOfflineGame() }
         )
         CustomButton(
             text = "AI Game",
-            onClick = { /* Handle settings button click */ }
+            onClick = { onNavigationToAiGame() }
         )
 
         CustomButton(

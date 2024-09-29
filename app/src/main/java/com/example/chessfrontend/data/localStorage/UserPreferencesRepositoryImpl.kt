@@ -1,5 +1,6 @@
 package com.example.chessfrontend.data.localStorage
 
+import ai_engine.board.pieces.Piece
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -23,7 +24,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
         password: String,
         token: String
     ) {
-        val dataStore : DataStore<Preferences> = context._dataStore
+        val dataStore: DataStore<Preferences> = context._dataStore
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.USERNAME] = username
             preferences[PreferencesKeys.PASSWORD] = password
@@ -33,11 +34,11 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
 
     override fun getCredentials(): Flow<Credentials> =
         context._dataStore.data.map { preferences ->
-        Credentials(
-            username = preferences[PreferencesKeys.USERNAME] ?: "",
-            password = preferences[PreferencesKeys.PASSWORD] ?: ""
-        )
-    }
+            Credentials(
+                username = preferences[PreferencesKeys.USERNAME] ?: "",
+                password = preferences[PreferencesKeys.PASSWORD] ?: ""
+            )
+        }
 
     override fun getToken(): Flow<Token> =
         context._dataStore.data.map { preferences ->
@@ -46,14 +47,70 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
             )
         }
 
+    override suspend fun refreshToken(token: Token) {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.TOKEN] = token.accessToken
+        }
+    }
 
-    override suspend fun isLoggedIn(): Boolean {
-        return getToken().first().accessToken != ""
+    override suspend fun logout() {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
+    override suspend fun saveOfflineGame(fen: String) {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.OFFLINE_GAME] = fen
+        }
+    }
+
+    override fun getOfflineGame(): Flow<String> =
+        context._dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.OFFLINE_GAME] ?: ""
+        }
+
+    override suspend fun deleteOfflineGame() {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.OFFLINE_GAME)
+        }
+    }
+
+    override suspend fun saveAiGame(fen: String) {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AI_GAME] = fen
+        }
+    }
+
+    override fun getAiGame(): Flow<String> =
+        context._dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.AI_GAME] ?: ""
+        }
+
+    override suspend fun deleteAiGame() {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.AI_GAME)
+        }
+    }
+
+    suspend fun saveData() {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.AI_GAME)
+        }
     }
 
     object PreferencesKeys {
         val USERNAME = stringPreferencesKey("username")
         val PASSWORD = stringPreferencesKey("password")
         val TOKEN = stringPreferencesKey("token")
+        val OFFLINE_GAME = stringPreferencesKey("offline_game")
+        val AI_GAME = stringPreferencesKey("ai_game")
     }
 }

@@ -1,6 +1,6 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
-import ai_engine.board.pieces.peice_interface.Piece
+import ai_engine.board.pieces.Piece
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.auth.bme.chess.ai_engine.board.BoardData
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class AiBoardViewModel @Inject constructor(
     private val chessApiService: ChessApiService,
     private val userPreferencesRepository: UserPreferencesRepository
-): BoardViewModel() {
+): BoardViewModel(userPreferencesRepository) {
 
     override fun handleAction(action: BoardAction) {
         when (action) {

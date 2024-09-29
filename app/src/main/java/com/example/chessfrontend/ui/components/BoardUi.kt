@@ -1,8 +1,8 @@
 package com.example.chessfrontend.ui.components
 
+import ai_engine.board.pieces.Piece
 import ai_engine.board.pieces.enums.PieceColor
 import ai_engine.board.pieces.enums.PieceName
-import ai_engine.board.pieces.peice_interface.Piece
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.example.chessfrontend.ui
+package com.example.chessfrontend.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -14,6 +14,7 @@ import com.example.chessfrontend.ui.viewmodels.LoginViewModel
 const val LOGIN_ROUTE = "login"
 const val REGISTER_ROUTE = "register"
 const val MAIN_MENU_ROUTE = "main_menu"
+
 
 @Composable
 fun LoginNavHost(

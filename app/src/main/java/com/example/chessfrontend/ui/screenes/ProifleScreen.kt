@@ -14,32 +14,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.components.CustomButton
 import com.example.chessfrontend.ui.components.FormHeading
+import com.example.chessfrontend.ui.viewmodels.LoginAction
+import com.example.chessfrontend.ui.viewmodels.ProfileAction
 import com.example.chessfrontend.ui.viewmodels.ProfileUiState
 import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
+import kotlin.reflect.KFunction1
 
 @Composable
 fun ProfileScreenRoot(
     onNavigationToFriendList: () -> Unit,
     onNavigationToGames: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel,
 ) {
     ProfileScreen(
         onNavigationToFriendList = onNavigationToFriendList,
         onNavigationToGames = onNavigationToGames,
-        state = profileViewModel.uiState
+        state = profileViewModel.uiState,
+        onAction = profileViewModel::handleAction
     )
-
 }
 
 @Composable
 fun ProfileScreen(
     onNavigationToFriendList: () -> Unit,
     onNavigationToGames: () -> Unit,
-    state: ProfileUiState
+    state: ProfileUiState,
+    onAction: (ProfileAction) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -66,6 +69,11 @@ fun ProfileScreen(
                 text = "Friend list",
                 onClick = {onNavigationToFriendList()}
             )
+
+            CustomButton(
+                text = "Logout",
+                onClick = {onAction(ProfileAction.Logout)}
+            )
         }
     }
 }
@@ -79,6 +87,7 @@ fun ProfileScreenPreview(){
         state = ProfileUiState(
             userName = "John Doe",
             email = "jhon@gmail.com"
-        )
+        ),
+        onAction = {}
     )
 }

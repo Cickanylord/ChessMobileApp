@@ -1,18 +1,21 @@
-package com.example.chessfrontend.ui
+package com.example.chessfrontend.ui.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.chessfrontend.ui.components.BoardScreenRoot
 import com.example.chessfrontend.ui.screenes.FriendListScreenRoot
 import com.example.chessfrontend.ui.screenes.MainMenuContent
 import com.example.chessfrontend.ui.screenes.ProfileScreenRoot
 import com.example.chessfrontend.ui.viewmodels.FriendListViewModel
 import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
+import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModel
 
 
 private const val MainMenuRoute = "main_menu"
@@ -36,7 +39,10 @@ fun MainNavHost(
     ) {
         composable(MainMenuRoute) {
             MainMenuContent(
-                onNavigationToProfile = { navController.navigate(profileRoute) }
+                onNavigationToProfile = { navController.navigate(profileRoute) },
+                onNavigationToOnlineGame = { navController.navigate(onlineGameRoute) },
+                onNavigationToOfflineGame = { navController.navigate(offlineGameRoute) },
+                onNavigationToAiGame = { navController.navigate(aiGameRoute) }
             )
         }
         composable(profileRoute) {
@@ -49,6 +55,24 @@ fun MainNavHost(
         composable(friendListRoute) {
             FriendListScreenRoot(
                 friendliestViewModel = friendListViewModel
+            )
+        }
+
+        composable(onlineGameRoute) {
+            BoardScreenRoot(
+                viewModel = hiltViewModel()
+            )
+        }
+
+        composable(offlineGameRoute) {
+            BoardScreenRoot(
+                viewModel = hiltViewModel()
+            )
+        }
+
+        composable(aiGameRoute) {
+            BoardScreenRoot(
+                viewModel = hiltViewModel()
             )
         }
     }
