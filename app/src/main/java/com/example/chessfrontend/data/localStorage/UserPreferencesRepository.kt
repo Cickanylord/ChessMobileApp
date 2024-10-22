@@ -2,6 +2,7 @@ package com.example.chessfrontend.data.localStorage
 
 import com.example.chessfrontend.data.model.Credentials
 import com.example.chessfrontend.data.model.Token
+import com.example.chessfrontend.data.model.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
@@ -23,4 +24,9 @@ interface UserPreferencesRepository {
     fun getAiGame(): Flow<String>
     suspend fun deleteAiGame()
 
+    /** save user id **/
+    suspend fun storeUserId(profile: UserEntity)
+
+    /** get user id **/
+    suspend fun getUserId(): Flow<Long>
 }

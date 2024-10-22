@@ -1,8 +1,10 @@
 package com.example.chessfrontend.ui.components
 
+import ai_engine.board.BoardData
 import ai_engine.board.pieces.Piece
 import ai_engine.board.pieces.enums.PieceColor
 import ai_engine.board.pieces.enums.PieceName
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,20 +13,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.auth.bme.chess.ai_engine.board.BoardData
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.viewmodels.gameModes.BoardAction
 import com.example.chessfrontend.ui.viewmodels.gameModes.BoardUiState
-import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModel
+import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModelImpl
 
 @Composable
 fun BoardScreenRoot(
-    viewModel: BoardViewModel,
+    viewModel: BoardViewModelImpl,
 ) {
     BoardScreenContent(
         state = viewModel.uiState,
@@ -33,12 +35,15 @@ fun BoardScreenRoot(
 }
 
 @Composable
-private fun BoardScreenContent(
+fun BoardScreenContent(
     state: BoardUiState,
     onAction: (BoardAction) -> Unit,
+    tileSize: Int = 45,
+    clickable: Boolean = true
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column {
@@ -51,17 +56,20 @@ private fun BoardScreenContent(
                         }
                         Box(
                             modifier = Modifier
-                                .size(45.dp)
+                                .size(tileSize.dp)
                                 .background(gridcolor)
-                                .clickable {
-                                    val pos = Pair(i,j)
+                                .clickable (enabled = clickable) {
+                                    val pos = Pair(i, j)
 
-                                    if(state.legalMoves.contains(pos)) {
+                                    if (state.legalMoves.contains(pos)) {
                                         onAction(BoardAction.Step(pos))
                                     } else {
-                                        state.board.getPiece(pos)?.let { piece ->
-                                            onAction(BoardAction.PieceClicked(piece))
-                                        }
+
+                                        state.board
+                                            .getPiece(pos)
+                                            ?.let { piece ->
+                                                onAction(BoardAction.PieceClicked(piece))
+                                            }
                                     }
                                 }
                         ) {
@@ -94,12 +102,13 @@ fun Piece.getPieceImage(): Int {
 
 
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun BoardScreenPreview() {
  BoardScreenContent(
      state = BoardUiState(
-         board = BoardData("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"),
+         boardState = mutableStateOf(BoardData("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")),
          legalMoves = listOf(Pair(5, 1), Pair(4, 1)),
          clickedPiece = null
      ),

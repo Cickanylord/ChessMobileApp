@@ -3,7 +3,7 @@ package com.example.chessfrontend.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserPost(
-    val name: String,
-    val password: String
+data class StepRequestEntity(
+    val matchId: Long,
+    val board: String
 )

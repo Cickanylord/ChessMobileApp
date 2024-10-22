@@ -6,8 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chessfrontend.data.model.User
 import com.example.chessfrontend.data.netwrok.ChessApiService
+import com.example.chessfrontend.ui.model.UserUiModel
+import com.example.chessfrontend.ui.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class FriendListViewModel@Inject constructor(
             try {
                 val friends = chessApiService.getFriends()
                 uiState = uiState.copy(
-                    friends = friends
+                    friends = friends.map { it.toUiModel() }
                 )
             } catch (e: Exception) {
                 Log.e("FriendListViewModel", "Error loading data", e)
@@ -49,5 +50,5 @@ sealed interface FriendListAction {
 }
 
 data class FriendListUiState (
-    val friends: List<User> = emptyList()
+    val friends: List<UserUiModel> = emptyList()
 )

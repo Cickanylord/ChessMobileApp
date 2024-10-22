@@ -39,8 +39,10 @@ class ProfileViewModel @Inject constructor(
                     userName = profile.name,
                     email = profile.name
                 )
+                userPreferencesRepository.storeUserId(profile)
+
             } catch (e: Exception) {
-                Log.e("FriendListViewModel", "Error loading data", e)
+                Log.e("ProfileViewModel", "Error loading data", e)
             }
         }
     }
@@ -53,7 +55,7 @@ class ProfileViewModel @Inject constructor(
                     logout = true
                 )
             } catch (e: Exception) {
-                Log.e("FriendListViewModel", "Error loading data", e)
+                Log.e("ProfileViewModel", "Error loading data", e)
             }
         }
     }

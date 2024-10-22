@@ -1,14 +1,17 @@
 package com.example.chessfrontend.ui.screenes
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +27,7 @@ import com.example.chessfrontend.ui.viewmodels.ChatViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,29 +35,39 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.data.model.MessageEntity
-
-
-private val ChatBubbleShape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
+import com.example.chessfrontend.ui.model.MessageUiModel
+import com.example.chessfrontend.ui.viewmodels.ChatAction
+import java.time.LocalDateTime
 
 @Composable
 fun ChatScreenRoot(
     chatViewModel: ChatViewModel = hiltViewModel()
 ) {
-   ChatScreenContent(chatViewModel.uiState)
+   ChatScreenContent(
+       chatViewModel.uiState,
+       onAction = chatViewModel::handleAction
+   )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreenContent(
-    state: ChatUiState
+    state: ChatUiState,
+    onAction: (ChatAction) -> Unit
 ) {
+    val localFocusManager = LocalFocusManager.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,11 +77,12 @@ fun ChatScreenContent(
 
         content = { innerPadding ->
             LazyColumn(
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = innerPadding,
-                reverseLayout = true
+                reverseLayout = true,
             ) {
                 items(state.messages) { message ->
-                    val isUserMe = message.sender == 2L
+                    val isUserMe = message.sender != state.friend?.id
                     MessageItem(
                         message = message,
                         isUserMe = isUserMe
@@ -78,59 +93,49 @@ fun ChatScreenContent(
         bottomBar =  {
             MessageInputField(
                 onSendMessage = { messageText ->
-                    // Handle sending the message
-                    //state.onSendMessage(messageText)
+                    localFocusManager.clearFocus()
+                    onAction(ChatAction.SendMessage(messageText))
                 }
             )
         }
     )
 }
 
+
 @Composable
 fun MessageItem(
-    message: MessageEntity,
+    message: MessageUiModel,
     isUserMe: Boolean
 ) {
-    val contentAlignment = if (isUserMe) Alignment.CenterEnd else Alignment.CenterStart
-    val containerColor = if (isUserMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = contentAlignment,
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = if (isUserMe) Arrangement.End else Arrangement.Start
     ) {
-        Card(
+        Box(
             modifier = Modifier
                 .padding(8.dp)
-                .wrapContentSize()
-                .heightIn(
-                    min = 50.dp
-                )
-                .widthIn(
-                    max = 300.dp
-                )
-                .align(contentAlignment),
-            colors = CardDefaults.cardColors(
-                containerColor = containerColor
-            )
-
+                .widthIn(max = 300.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .wrapContentSize(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-
+            Card(
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isUserMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier.wrapContentSize()
             ) {
                 Text(
                     text = message.text,
                     style = MaterialTheme.typography.bodyLarge,
-                    //textAlign = if (isUserMe) TextAlign.End else TextAlign.Start
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .wrapContentSize(Alignment.Center)
                 )
             }
         }
     }
-
 }
+
 
 
 @Composable
@@ -141,28 +146,42 @@ fun MessageInputField(
 
     Row(
         modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextField(
             value = messageText,
             onValueChange = { messageText = it },
-            modifier = Modifier.weight(1F),
-            placeholder = { Text("Type a message...") }
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
+                .wrapContentHeight()
+                .clip(RoundedCornerShape(25.dp)),
+            placeholder = { Text("Type a message...") },
+
         )
         IconButton(
             onClick = {
                 if (messageText.isNotBlank()) {
                     onSendMessage(messageText)
-                    messageText = "" // Clear input after sending
+                    messageText = ""
                 }
-            }
+            },
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(50))
+                .background(MaterialTheme.colorScheme.primary)
         ) {
-            Icon(Icons.Default.Send, contentDescription = "Send Message")
+            Icon(
+                Icons.AutoMirrored.Filled.Send,
+                contentDescription = "Send Message",
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }
+
 
 
 @Preview
@@ -171,15 +190,16 @@ fun ChatScreenContentPreview() {
     ChatScreenContent(
         state = ChatUiState(
             messages = listOf(
-                MessageEntity(
+                MessageUiModel(
                     id = 1,
                     text = "Hello",
                     sender = 1L,
                     receiver = 4L,
-                    sentDate = "asd"
+                    sentDate = LocalDateTime.now()
                 ),
             )
-        )
+        ),
+        onAction = {}
     )
             //user = User(1, "me", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
             //partner = User(2, "friend1", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),

@@ -1,13 +1,13 @@
 package com.example.chessfrontend.ui.screenes
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -21,23 +21,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.R
-import com.example.chessfrontend.data.model.User
+import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.FriendListUiState
 import com.example.chessfrontend.ui.viewmodels.FriendListViewModel
 
 
 @Composable
 fun FriendListScreenRoot(
-    friendliestViewModel: FriendListViewModel
+    friendliestViewModel: FriendListViewModel,
+    onNavigationToChat: (UserUiModel) -> Unit = {},
+    onNavigationToMatches: (UserUiModel) -> Unit = {}
 ) {
     FriendListScreenContent(
         state = friendliestViewModel.uiState,
+        onNavigationToChat = onNavigationToChat,
+        onNavigationToMatches = onNavigationToMatches
     )
 }
 
 @Composable
 fun FriendListScreenContent(
-    state: FriendListUiState
+    state: FriendListUiState,
+    onNavigationToChat: (UserUiModel) -> Unit = {},
+    onNavigationToMatches: (UserUiModel) -> Unit = {}
 ) {
     LazyColumn {
         items(state.friends) { item ->
@@ -45,7 +51,8 @@ fun FriendListScreenContent(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .wrapContentHeight()
+                    .height(75.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -65,7 +72,9 @@ fun FriendListScreenContent(
 
                     // Game button
                     IconButton(
-                        onClick = {  },
+                        onClick = {
+                            onNavigationToMatches(item)
+                        },
                         modifier = Modifier
                             .size(ButtonSize)
                             .weight(2f)
@@ -81,7 +90,7 @@ fun FriendListScreenContent(
                     // Chat button
                     IconButton(
                         onClick = {
-
+                            onNavigationToChat(item)
                         },
                         modifier = Modifier
                             .size(ButtonSize)
@@ -105,9 +114,9 @@ fun FriendListScreenContentPreview() {
     FriendListScreenContent(
         state = FriendListUiState(
             friends = listOf(
-                User(1, "friend1", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
-                User(2, "friend2", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
-                User(3, "friend3", listOf(), listOf(), listOf(), listOf(), listOf(), listOf())
+                UserUiModel(1, "friend1", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
+                UserUiModel(2, "friend2", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
+                UserUiModel(3, "friend3", listOf(), listOf(), listOf(), listOf(), listOf(), listOf())
             )
         )
     )

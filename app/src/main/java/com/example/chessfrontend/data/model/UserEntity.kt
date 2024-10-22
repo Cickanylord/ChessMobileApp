@@ -3,7 +3,7 @@ package com.example.chessfrontend.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class UserEntity(
     val id: Long,
     val name: String,
     val roles: List<String>,
@@ -12,6 +12,4 @@ data class User(
     val challenger: List<Long>,
     val challenged: List<Long>,
     val friendList: List<Long>,
-) {
-
-}
+)

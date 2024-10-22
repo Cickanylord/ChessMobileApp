@@ -3,12 +3,14 @@ package com.example.chessfrontend.data.localStorage
 import ai_engine.board.pieces.Piece
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.chessfrontend.data.model.Credentials
 import com.example.chessfrontend.data.model.Token
+import com.example.chessfrontend.data.model.UserEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -106,7 +108,24 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
         }
     }
 
+    override suspend fun storeUserId(profile: UserEntity) {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ID] = profile.id.toString()
+        }
+    }
+
+    override suspend fun getUserId(): Flow<Long> =
+        context
+            ._dataStore.data
+            .map { preferences ->
+                preferences[PreferencesKeys.ID]?.toLong() ?: 1L
+
+            }
+
+
     object PreferencesKeys {
+        val ID = stringPreferencesKey("id")
         val USERNAME = stringPreferencesKey("username")
         val PASSWORD = stringPreferencesKey("password")
         val TOKEN = stringPreferencesKey("token")

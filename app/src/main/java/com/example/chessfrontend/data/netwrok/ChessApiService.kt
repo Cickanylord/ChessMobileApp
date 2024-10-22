@@ -1,14 +1,18 @@
 package com.example.chessfrontend.data.netwrok
 
+import com.example.chessfrontend.data.model.MatchEntity
 import com.example.chessfrontend.data.model.MessageEntity
+import com.example.chessfrontend.data.model.MessageOutEntity
+import com.example.chessfrontend.data.model.StepRequestEntity
 import com.example.chessfrontend.data.model.Token
-import com.example.chessfrontend.data.model.User
 import com.example.chessfrontend.data.model.UserAuth
+import com.example.chessfrontend.data.model.UserEntity
 import com.example.chessfrontend.data.model.UserPost
 import com.example.chessfrontend.ui.viewmodels.gameModes.FenDTO
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ChessApiService {
@@ -24,19 +28,19 @@ interface ChessApiService {
      * @param userPost The user's registration details.
      */
     @POST("/api/user")
-    suspend fun register(@Body userPost: UserPost): User
+    suspend fun register(@Body userPost: UserPost): UserEntity
 
     /**
      * Get the authenticated user's profile.
      */
     @GET("/api/user/me")
-    suspend fun getProfile(): User
+    suspend fun getProfile(): UserEntity
 
     /**
      * Get a list of friends for the authenticated user.
      */
     @GET("/api/user/friends")
-    suspend fun getFriends(): List<User>
+    suspend fun getFriends(): List<UserEntity>
 
     /**
      * get the best step for the current position
@@ -49,6 +53,31 @@ interface ChessApiService {
      * Get a list of messages between the authenticated user and a specific partner.
      * @param partnerId The ID of the partner user.
      */
-    @POST("/api/messages/partner/{id}")
+    @GET("/api/messages/partner/{id}")
     suspend fun getMessageBetweenUsers(@Path("id") partnerId: Long): List<MessageEntity>
+
+    /**
+     * Send a message to a specific partner.
+     * @param message The message to send.
+     */
+    @POST("/api/messages")
+    suspend fun sendMessage(@Body message: MessageOutEntity): MessageEntity
+
+    /**
+     * Get a list of matches between the authenticated user and a specific partner.
+     * @param partnerId The ID of the partner user.
+     */
+    @GET("/api/chessMatch/getMatchesWithPartner/{id}")
+    suspend fun getMatchesBetweenUsers(@Path("id") partnerId: Long): List<MatchEntity>
+
+    /**
+     * Get a specific match by its ID.
+     * @param matchId The ID of the match.
+     */
+    @GET("/api/chessMatch/{id}")
+    suspend fun getMatch(@Path("id") matchId: Long): MatchEntity
+
+    @PUT("/api/chessMatch/step")
+    suspend fun step(@Body match: StepRequestEntity): MatchEntity
+
 }

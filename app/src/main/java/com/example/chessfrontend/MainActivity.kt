@@ -35,10 +35,6 @@ class MainActivity : ComponentActivity() {
     private val loginViewModel: LoginViewModel by viewModels()
     private val registerViewModel: RegisterViewModel by viewModels()
 
-    /** intent for the next activity **/
-
-
-
     /** data storage **/
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
@@ -55,12 +51,16 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
+                    /** intent for the main menu activity */
                     val intent: Intent = Intent(this, MainMenuActivity::class.java)
+
+                    /** check if the user is already logged in **/
                     LaunchedEffect (Unit) {
                         val credentials = userPreferencesRepository
                             .getCredentials()
                             .first()
 
+                        /** authenticate the user to get new access token**/
                         try {
                             val token = chessApiService.authenticate(
                                 UserAuth(
@@ -76,11 +76,13 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    /** login screen if the user is not logged in**/
                     LoginNavHost(
                         loginViewModel = loginViewModel
                     )
                     val loginState = loginViewModel.uiState
 
+                    /** if the login is successful, store the credentials and start the main menu activity**/
                     if (loginState.isLoggedIn) {
                         LaunchedEffect(Unit) {
                             userPreferencesRepository.storeCredentials(

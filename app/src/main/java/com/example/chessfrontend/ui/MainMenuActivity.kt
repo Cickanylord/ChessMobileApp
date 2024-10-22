@@ -1,6 +1,7 @@
 package com.example.chessfrontend.ui
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,8 @@ import androidx.activity.viewModels
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.ui.graphics.colorspace.connect
+import androidx.compose.ui.input.key.type
 import com.example.chessfrontend.MainActivity
 import com.example.chessfrontend.ui.components.FormHeading
 import com.example.chessfrontend.ui.navigation.MainNavHost
@@ -26,6 +29,7 @@ class MainMenuActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val chatViewModel: ChatViewModel by viewModels()
 
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +39,12 @@ class MainMenuActivity : ComponentActivity() {
                     content = { padding ->
                         //println("Padding: $padding")
                         padding
-                        ChatScreenRoot(chatViewModel)
-//                           MainNavHost (
-//                                paddingValues = padding,
-//                                profileViewModel = profileViewModel,
-//                                friendListViewModel = friendListViewModel
-//                           )
+                        //ChatScreenRoot(chatViewModel)
+                           MainNavHost (
+                                paddingValues = padding,
+                                profileViewModel = profileViewModel,
+                                friendListViewModel = friendListViewModel
+                           )
                     }
                 )
                 val intent: Intent = Intent(this, MainActivity::class.java)
@@ -52,4 +56,6 @@ class MainMenuActivity : ComponentActivity() {
         }
     }
 }
+
+
 
