@@ -114,11 +114,16 @@ class ChatViewModel @Inject constructor(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             Log.d("ChatViewModel", "Received message: $text")
+            loadMessages(uiState.friend?.id ?: -1L)
+            /*
             val message = Gson().fromJson(text, MessageEntity::class.java).toUiModel()
-
+            if (message.sender == uiState.friend?.id) {
             uiState = uiState.copy(
                 messages = listOf(message) + uiState.messages
             )
+                }
+
+             */
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {

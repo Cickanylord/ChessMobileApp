@@ -1,5 +1,6 @@
 package com.example.chessfrontend.data.netwrok
 
+import com.example.chessfrontend.data.model.FriendRequestEntity
 import com.example.chessfrontend.data.model.MatchEntity
 import com.example.chessfrontend.data.model.MessageEntity
 import com.example.chessfrontend.data.model.MessageOutEntity
@@ -80,4 +81,16 @@ interface ChessApiService {
     @PUT("/api/chessMatch/step")
     suspend fun step(@Body match: StepRequestEntity): MatchEntity
 
+    /**
+     * get a list of all users
+     */
+    @GET("/api/user")
+    suspend fun getUsers(): List<UserEntity>
+
+    /**
+     * Add a friend to the authenticated user's friend list.
+     * @param id The ID of the friend to add.
+     */
+    @PUT("/api/user/addFriend")
+    suspend fun addFriend(@Body friendRequest: FriendRequestEntity)
 }

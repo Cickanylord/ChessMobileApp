@@ -11,4 +11,5 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="profile">Profile</string>
     <string name="saved_token_key">TOKEN</string>
+    <string name="add_friend_button">add Friend button</string>
 </resources>

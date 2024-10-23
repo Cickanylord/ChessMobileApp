@@ -8,8 +8,6 @@ import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
 import com.example.chessfrontend.data.model.MatchEntity
 import com.example.chessfrontend.data.model.StepRequestEntity
 import com.example.chessfrontend.data.netwrok.ChessApiService
-import com.example.chessfrontend.ui.model.MatchUiModel
-import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.model.toUiModel
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +24,7 @@ import javax.inject.Inject
 class OnlineBoardViewModelImpl @Inject constructor(
     private val chessApiService: ChessApiService,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BoardViewModelImpl() {
 
     private lateinit var webSocket: WebSocket

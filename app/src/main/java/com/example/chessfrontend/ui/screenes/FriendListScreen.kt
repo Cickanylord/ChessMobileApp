@@ -1,5 +1,6 @@
 package com.example.chessfrontend.ui.screenes
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,26 +23,53 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.R
+import com.example.chessfrontend.ui.components.MyFloatingActionButton
 import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.FriendListUiState
 import com.example.chessfrontend.ui.viewmodels.FriendListViewModel
-
 
 @Composable
 fun FriendListScreenRoot(
     friendliestViewModel: FriendListViewModel,
     onNavigationToChat: (UserUiModel) -> Unit = {},
-    onNavigationToMatches: (UserUiModel) -> Unit = {}
+    onNavigationToMatches: (UserUiModel) -> Unit = {},
+    onNavigationToUsers: () -> Unit = {},
 ) {
     FriendListScreenContent(
         state = friendliestViewModel.uiState,
         onNavigationToChat = onNavigationToChat,
-        onNavigationToMatches = onNavigationToMatches
+        onNavigationToMatches = onNavigationToMatches,
+        onNavigationToUsers = onNavigationToUsers,
+    )
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun FriendListScreenContent(
+    state: FriendListUiState,
+    onNavigationToChat: (UserUiModel) -> Unit = {},
+    onNavigationToMatches: (UserUiModel) -> Unit = {},
+    onNavigationToUsers: () -> Unit = {},
+) {
+    Scaffold(
+        content = {
+            FriendList(
+                state = state,
+                onNavigationToChat = onNavigationToChat,
+                onNavigationToMatches = onNavigationToMatches
+            )
+        },
+        floatingActionButton = {
+            MyFloatingActionButton(
+                onClick = { onNavigationToUsers() },
+                contentDescription = R.string.add_friend_button
+            )
+        },
     )
 }
 
 @Composable
-fun FriendListScreenContent(
+fun FriendList(
     state: FriendListUiState,
     onNavigationToChat: (UserUiModel) -> Unit = {},
     onNavigationToMatches: (UserUiModel) -> Unit = {}
@@ -61,7 +90,7 @@ fun FriendListScreenContent(
                         .weight(8f)
                     ,
                     horizontalArrangement = Arrangement.Absolute.Center,
-                    verticalAlignment = Alignment.CenterVertically // Add this for vertical centering
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         modifier = Modifier.weight(2f),
@@ -106,6 +135,7 @@ fun FriendListScreenContent(
         }
     }
 }
+
 private val ButtonSize = 60.dp
 
 @Preview(showBackground = true)

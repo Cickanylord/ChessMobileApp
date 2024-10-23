@@ -19,6 +19,7 @@ import com.example.chessfrontend.ui.screenes.FriendListScreenRoot
 import com.example.chessfrontend.ui.screenes.MainMenuContent
 import com.example.chessfrontend.ui.screenes.MatchesScreenRoot
 import com.example.chessfrontend.ui.screenes.ProfileScreenRoot
+import com.example.chessfrontend.ui.screenes.UserListScreenRoot
 import com.example.chessfrontend.ui.viewmodels.FriendListViewModel
 import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 import com.example.chessfrontend.ui.viewmodels.gameModes.AiBoardViewModelImpl
@@ -34,6 +35,7 @@ private const val profileRoute = "profile"
 private const val friendListRoute = "friend_list"
 private const val chatRoute = "chat"
 private const val matchesRoute = "matches"
+private const val lisOfUsersRoute = "list_of_users"
 
 @Composable
 fun MainNavHost(
@@ -69,6 +71,7 @@ fun MainNavHost(
                     val userJson = Gson().toJson(user)
                     navController.navigate("$chatRoute/$userJson")
                 },
+                onNavigationToUsers = {navController.navigate(lisOfUsersRoute)},
                 onNavigationToMatches = { user ->
                     val userJson = Gson().toJson(user)
                     navController.navigate("$matchesRoute/$userJson")
@@ -119,6 +122,13 @@ fun MainNavHost(
             BoardScreenRoot(
                 viewModel = hiltViewModel<AiBoardViewModelImpl>()
             )
+        }
+
+        composable(lisOfUsersRoute) {
+            UserListScreenRoot(
+                userListViewModel = hiltViewModel()
+            )
+
         }
     }
 }
