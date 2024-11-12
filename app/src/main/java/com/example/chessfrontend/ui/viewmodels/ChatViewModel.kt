@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
-import com.example.chessfrontend.data.model.MessageEntity
 import com.example.chessfrontend.data.model.MessageOutEntity
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.example.chessfrontend.ui.model.MessageUiModel
@@ -42,11 +41,14 @@ class ChatViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val friendJson = savedStateHandle.get<String>("userJson")
+            val user = userPreferencesRepository.getUser().first()!!
+
             uiState = uiState.copy(
-                friend = Gson().fromJson(friendJson, UserUiModel::class.java)
+                friend = Gson().fromJson(friendJson, UserUiModel::class.java),
+                user = user.toUiModel()
             )
-            val userId = userPreferencesRepository.getUserId().first()
-            buildWebSocket(userId)
+
+            buildWebSocket(user.id)
             loadMessages(uiState.friend?.id ?: -1L)
         }
     }
@@ -144,8 +146,8 @@ data class ChatUiState(
     val user: UserUiModel? = null
 )
 
-sealed class ChatAction {
-    data class LoadMessages(val partnerId: Long) : ChatAction()
-    data class SendMessage(val message: String) : ChatAction()
+sealed interface ChatAction {
+    data class LoadMessages(val partnerId: Long) : ChatAction
+    data class SendMessage(val message: String) : ChatAction
 }
 

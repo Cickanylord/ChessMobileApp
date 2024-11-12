@@ -1,6 +1,5 @@
 package com.example.chessfrontend.ui.components
 
-import ai_engine.board.BoardData
 import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -18,27 +17,23 @@ import com.example.chessfrontend.ui.viewmodels.gameModes.BoardUiState
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun DrawSmallBoard(
+    modifier: Modifier = Modifier,
     tileSize: Int,
-    match: MatchUiModel = MatchUiModel(
-        id = -1L,
-        challenger = -1L,
-        challenged = -1L,
-        board = BoardData("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-    )
+    match: MatchUiModel = MatchUiModel()
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(8.dp * tileSize)
             .border(
                 width = 2.dp,
-                color = Color.Gray,
+                color = Color.Gray.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(16.dp)
             )
             .clip(RoundedCornerShape(16.dp))
     ) {
         BoardScreenContent(
             state = BoardUiState(
-                boardState = mutableStateOf(match.board),
+                boardState = mutableStateOf(match.board)
             ),
             onAction = {},
             tileSize = tileSize,

@@ -1,10 +1,8 @@
 package com.example.chessfrontend.ui.navigation
 
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.BackHandler
+
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -13,15 +11,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.chessfrontend.ui.components.BoardScreenRoot
-import com.example.chessfrontend.ui.model.toEntity
 import com.example.chessfrontend.ui.screenes.ChatScreenRoot
 import com.example.chessfrontend.ui.screenes.FriendListScreenRoot
-import com.example.chessfrontend.ui.screenes.MainMenuContent
+import com.example.chessfrontend.ui.screenes.MainMenuRoot
 import com.example.chessfrontend.ui.screenes.MatchesScreenRoot
 import com.example.chessfrontend.ui.screenes.ProfileScreenRoot
 import com.example.chessfrontend.ui.screenes.UserListScreenRoot
-import com.example.chessfrontend.ui.viewmodels.FriendListViewModel
-import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 import com.example.chessfrontend.ui.viewmodels.gameModes.AiBoardViewModelImpl
 import com.example.chessfrontend.ui.viewmodels.gameModes.OfflineBoardViewModelImpl
 import com.example.chessfrontend.ui.viewmodels.gameModes.OnlineBoardViewModelImpl
@@ -34,39 +29,53 @@ private const val aiGameRoute = "ai_game"
 private const val profileRoute = "profile"
 private const val friendListRoute = "friend_list"
 private const val chatRoute = "chat"
-private const val matchesRoute = "matches"
+private const val matchesRoute = "matchesLost"
 private const val lisOfUsersRoute = "list_of_users"
 
 @Composable
 fun MainNavHost(
-    paddingValues: PaddingValues,
-    profileViewModel: ProfileViewModel,
-    friendListViewModel: FriendListViewModel,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
         navController = navController,
         startDestination = MainMenuRoute,
-        modifier = Modifier.padding(paddingValues) // Apply padding to the NavHost
+
     ) {
         composable(MainMenuRoute) {
-            MainMenuContent(
-                onNavigationToProfile = { navController.navigate(profileRoute) },
-                onNavigationToOnlineGame = { navController.navigate(onlineGameRoute) },
+            MainMenuRoot (
+                mainMenuViewModel = hiltViewModel(),
+                onNavigationToProfile = { user ->
+                    navController.navigate("$profileRoute/${user.id}")
+                },
+                onNavigationToOnlineGame = { match ->
+                    navController.navigate("$onlineGameRoute/${match.id}")
+                },
                 onNavigationToOfflineGame = { navController.navigate(offlineGameRoute) },
                 onNavigationToAiGame = { navController.navigate(aiGameRoute) }
             )
         }
-        composable(profileRoute) {
+
+        composable(
+            route = "$profileRoute/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) {
             ProfileScreenRoot(
                 onNavigationToFriendList = {navController.navigate(friendListRoute)},
                 onNavigationToGames = {},
-                profileViewModel = profileViewModel
+                onNavigationToChat = { user ->
+                    val userJson = Gson().toJson(user)
+                    navController.navigate("$chatRoute/$userJson")
+                },
+                onNavigationToOnlineGame = { match ->
+                    navController.navigate("$onlineGameRoute/${match.id}")
+                },
+                profileViewModel = hiltViewModel()
             )
         }
+
         composable(friendListRoute) {
             FriendListScreenRoot(
-                friendliestViewModel = friendListViewModel,
+                friendliestViewModel = hiltViewModel(),
                 onNavigationToChat = { user ->
                     val userJson = Gson().toJson(user)
                     navController.navigate("$chatRoute/$userJson")
@@ -104,18 +113,22 @@ fun MainNavHost(
 
         composable(
             route = "$onlineGameRoute/{matchId}",
-            arguments = listOf(navArgument("matchId") { type = NavType.LongType })
+            arguments = listOf(navArgument("matchId") { type = NavType.LongType }),
         ) { backStackEntry ->
             val matchJson = backStackEntry.arguments?.getString("matchId") ?: ""
             BoardScreenRoot(
                 viewModel = hiltViewModel<OnlineBoardViewModelImpl>()
             )
+
         }
 
         composable(offlineGameRoute) {
             BoardScreenRoot(
                 viewModel = hiltViewModel<OfflineBoardViewModelImpl>()
             )
+            BackHandler {
+                navController.navigate(MainMenuRoute)
+            }
         }
 
         composable(aiGameRoute) {
@@ -128,7 +141,6 @@ fun MainNavHost(
             UserListScreenRoot(
                 userListViewModel = hiltViewModel()
             )
-
         }
     }
 }

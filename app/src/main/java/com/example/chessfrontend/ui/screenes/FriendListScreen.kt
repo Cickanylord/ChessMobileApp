@@ -144,9 +144,9 @@ fun FriendListScreenContentPreview() {
     FriendListScreenContent(
         state = FriendListUiState(
             friends = listOf(
-                UserUiModel(1, "friend1", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
-                UserUiModel(2, "friend2", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
-                UserUiModel(3, "friend3", listOf(), listOf(), listOf(), listOf(), listOf(), listOf())
+                UserUiModel(1, "friend1", listOf(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
+                UserUiModel(2, "friend2", listOf(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),
+                UserUiModel(3, "friend3", listOf(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf(), listOf())
             )
         )
     )

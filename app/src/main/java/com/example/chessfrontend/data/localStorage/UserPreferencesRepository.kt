@@ -25,8 +25,11 @@ interface UserPreferencesRepository {
     suspend fun deleteAiGame()
 
     /** save user id **/
-    suspend fun storeUserId(profile: UserEntity)
+    suspend fun storeUser(profile: UserEntity)
 
     /** get user id **/
-    suspend fun getUserId(): Flow<Long>
+    suspend fun getUser(): Flow<UserEntity?>
+
+    suspend fun saveLasOnlineGame(id: Long)
+    suspend fun getLasOnlineGame(): Flow<Long>
 }

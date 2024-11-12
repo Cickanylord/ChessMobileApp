@@ -1,9 +1,7 @@
 package com.example.chessfrontend.data.localStorage
 
-import ai_engine.board.pieces.Piece
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -11,9 +9,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.chessfrontend.data.model.Credentials
 import com.example.chessfrontend.data.model.Token
 import com.example.chessfrontend.data.model.UserEntity
+import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -72,7 +70,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
 
     override fun getOfflineGame(): Flow<String> =
         context._dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.OFFLINE_GAME] ?: ""
+            preferences[PreferencesKeys.OFFLINE_GAME] ?: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         }
 
     override suspend fun deleteOfflineGame() {
@@ -91,7 +89,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
 
     override fun getAiGame(): Flow<String> =
         context._dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.AI_GAME] ?: ""
+            preferences[PreferencesKeys.AI_GAME] ?: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         }
 
     override suspend fun deleteAiGame() {
@@ -108,20 +106,33 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
         }
     }
 
-    override suspend fun storeUserId(profile: UserEntity) {
+    override suspend fun storeUser(profile: UserEntity) {
         val dataStore: DataStore<Preferences> = context._dataStore
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.ID] = profile.id.toString()
+            preferences[PreferencesKeys.User] = Gson().toJson(profile)
         }
     }
 
-    override suspend fun getUserId(): Flow<Long> =
+    override suspend fun getUser(): Flow<UserEntity?> =
         context
             ._dataStore.data
             .map { preferences ->
-                preferences[PreferencesKeys.ID]?.toLong() ?: 1L
-
+                preferences[PreferencesKeys.User]?.let {
+                    return@map Gson().fromJson(it, UserEntity::class.java)
+                }
             }
+
+    override suspend fun saveLasOnlineGame(id: Long) {
+        val dataStore: DataStore<Preferences> = context._dataStore
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_ONLINE_GAME] = id.toString()
+        }
+    }
+
+    override suspend fun getLasOnlineGame(): Flow<Long> =
+        context._dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.LAST_ONLINE_GAME]?.toLong() ?: -1L
+        }
 
 
     object PreferencesKeys {
@@ -131,5 +142,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext priv
         val TOKEN = stringPreferencesKey("token")
         val OFFLINE_GAME = stringPreferencesKey("offline_game")
         val AI_GAME = stringPreferencesKey("ai_game")
+        val User = stringPreferencesKey("user")
+        val LAST_ONLINE_GAME = stringPreferencesKey("last_online_game")
     }
 }

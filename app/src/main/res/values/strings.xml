@@ -12,4 +12,14 @@
     <string name="profile">Profile</string>
     <string name="saved_token_key">TOKEN</string>
     <string name="add_friend_button">add Friend button</string>
+    <string name="vs_random">VS Random</string>
+    <string name="play_online">Play Online</string>
+    <string name="play_against_computer">Play Againt Computer</string>
+    <string name="vs_Chess_GPT">VS Chess GPT</string>
+    <string name="Play_locally">Play Locally</string>
+    <string name="vs_your_friend">VS Your Friend</string>
+    <string name="Continue_Game">Continue Game</string>
+    <string name="friends">Friends</string>
+    <string name="going_matches">Going Matches</string>
+    <string name="ended_matches">Ended Matches</string>
 </resources>

@@ -1,61 +1,95 @@
 package com.example.chessfrontend.ui.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
-import com.example.chessfrontend.data.netwrok.ChessApiService
+import com.example.chessfrontend.data.MatchRepository
+import com.example.chessfrontend.data.UserRepository
+import com.example.chessfrontend.ui.model.MatchUiModel
+import com.example.chessfrontend.ui.model.UserUiModel
+import com.example.chessfrontend.ui.model.WinLoseRatioModel
+import com.example.chessfrontend.ui.model.countWinLoseRatio
+import com.example.chessfrontend.ui.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val chessApiService: ChessApiService,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userRepository: UserRepository,
+    private val matchRepository: MatchRepository,
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
     var uiState by mutableStateOf(ProfileUiState())
         private set
 
     init {
+        val id = savedStateHandle.get<Long>("userId")
+        uiState = uiState.copy(id = id ?: -1L)
         loadData()
+        observeMatches()
+        observeUsers()
     }
 
     fun handleAction(action: ProfileAction) {
         when (action) {
             is ProfileAction.LoadData -> loadData()
             is ProfileAction.Logout -> logout()
+            is ProfileAction.PostMatch -> postMatch()
+        }
+    }
+
+    private fun postMatch() {
+        viewModelScope.launch {
+            matchRepository.postMatch(uiState.user.id)
         }
     }
 
     private fun loadData() {
         viewModelScope.launch {
-            try {
-                val profile = chessApiService.getProfile()
-                uiState = uiState.copy(
-                    userName = profile.name,
-                    email = profile.name
-                )
-                userPreferencesRepository.storeUserId(profile)
-
-            } catch (e: Exception) {
-                Log.e("ProfileViewModel", "Error loading data", e)
-            }
+            matchRepository.getMatches()
+            //userRepository.getProfile()
         }
     }
 
     private fun logout(){
+        TODO()
+    }
+
+    private fun observeMatches() {
         viewModelScope.launch {
-            try {
-                userPreferencesRepository.logout()
+            matchRepository.matches.observeForever() { matches ->
                 uiState = uiState.copy(
-                    logout = true
+                    matches = matches
+                        .map { it.toUiModel() }
+                        .filter { match ->
+                            listOf(match.challenger, match.challenged).run {
+                                contains(uiState.user.id) && contains(uiState.myProfile.id)
+                            }
+                        }
                 )
-            } catch (e: Exception) {
-                Log.e("ProfileViewModel", "Error loading data", e)
+                uiState = uiState.copy(
+                    winLoseRatio = countWinLoseRatio(
+                        uiState.matches,
+                        uiState.myProfile.id
+                    )
+                )
+            }
+        }
+    }
+
+    private fun observeUsers() {
+        viewModelScope.launch {
+            userRepository.combinedUsers.observeForever() { users ->
+                uiState = uiState.copy(
+                    user = users.find { it.id == uiState.id }?.toUiModel() ?: UserUiModel(),
+                    isMyProfile = uiState.id == userRepository.profile.value?.id,
+                    myProfile = userRepository.profile.value?.toUiModel() ?: UserUiModel(),
+                    users = users.map { it.toUiModel() },
+                )
             }
         }
     }
@@ -64,10 +98,16 @@ class ProfileViewModel @Inject constructor(
 sealed interface ProfileAction {
     data object LoadData : ProfileAction
     data object Logout : ProfileAction
+    data object PostMatch: ProfileAction
 }
 
 data class ProfileUiState(
-    val userName: String = "",
-    val email: String = "",
-    val logout: Boolean = false
+    val id: Long = -1L,
+    val user: UserUiModel = UserUiModel(),
+    val logout: Boolean = false,
+    val matches: List<MatchUiModel> = emptyList(),
+    val myProfile: UserUiModel = UserUiModel(),
+    val isMyProfile: Boolean = false,
+    val users: List<UserUiModel> = emptyList(),
+    val winLoseRatio: WinLoseRatioModel = WinLoseRatioModel(-1, -1)
 )

@@ -43,7 +43,14 @@ fun BoardScreenContent(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            /*
+            .graphicsLayer {
+                rotationZ = 180f
+            }
+
+             */
+        ,
         contentAlignment = Alignment.Center
     ) {
         Column {

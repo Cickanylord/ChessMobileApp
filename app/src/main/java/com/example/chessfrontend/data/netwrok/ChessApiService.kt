@@ -2,6 +2,7 @@ package com.example.chessfrontend.data.netwrok
 
 import com.example.chessfrontend.data.model.FriendRequestEntity
 import com.example.chessfrontend.data.model.MatchEntity
+import com.example.chessfrontend.data.model.MatchRequestEntity
 import com.example.chessfrontend.data.model.MessageEntity
 import com.example.chessfrontend.data.model.MessageOutEntity
 import com.example.chessfrontend.data.model.StepRequestEntity
@@ -65,11 +66,17 @@ interface ChessApiService {
     suspend fun sendMessage(@Body message: MessageOutEntity): MessageEntity
 
     /**
-     * Get a list of matches between the authenticated user and a specific partner.
+     * Get a list of matchesLost between the authenticated user and a specific partner.
      * @param partnerId The ID of the partner user.
      */
     @GET("/api/chessMatch/getMatchesWithPartner/{id}")
     suspend fun getMatchesBetweenUsers(@Path("id") partnerId: Long): List<MatchEntity>
+
+    /**
+     * get all matches by authenticated user
+     */
+    @GET("/api/chessMatch")
+    suspend fun getMatches(): List<MatchEntity>
 
     /**
      * Get a specific match by its ID.
@@ -93,4 +100,8 @@ interface ChessApiService {
      */
     @PUT("/api/user/addFriend")
     suspend fun addFriend(@Body friendRequest: FriendRequestEntity)
+
+    @POST("/api/chessMatch")
+    suspend fun postMatch(@Body matchRequest: MatchRequestEntity): MatchEntity
+
 }

@@ -4,6 +4,7 @@ import ai_engine.board.BoardData
 import ai_engine.board.pieces.Piece
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.example.chessfrontend.ui.model.UserUiModel
 
 
 const val DEFAULT_GAME: String  = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -30,7 +31,10 @@ sealed interface BoardAction {
 data class BoardUiState(
     var boardState: MutableState<BoardData> = mutableStateOf(BoardData("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")),
     val legalMoves: List<Pair<Int, Int>> = listOf(),
-    val clickedPiece: Piece? = null
+    val clickedPiece: Piece? = null,
+    val user: UserUiModel? = null,
+    val opponent: UserUiModel? = null,
+    val matchId: Long = -1L
 ) {
     val board: BoardData
         get() = boardState.value

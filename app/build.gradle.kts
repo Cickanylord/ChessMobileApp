@@ -116,5 +116,7 @@ dependencies {
     implementation ("com.aut.bme.chessAI:ChessAi:1.0")
 
     implementation ("com.google.code.gson:gson:2.10.1")
+
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
 }
 

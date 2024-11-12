@@ -13,7 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@Deprecated("use drawer instead")
 @HiltViewModel
 class FriendListViewModel@Inject constructor(
     private val chessApiService: ChessApiService,

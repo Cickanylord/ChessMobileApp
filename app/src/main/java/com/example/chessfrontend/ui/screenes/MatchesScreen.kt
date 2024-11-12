@@ -1,10 +1,17 @@
 package com.example.chessfrontend.ui.screenes
 
-import ai_engine.board.BoardData
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.chessfrontend.ui.components.DisplayWinLoseRatio
 import com.example.chessfrontend.ui.components.MatchCard
 import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
@@ -31,17 +38,40 @@ fun MatchesScreenContent(
     onNavigationToMatch: (match: MatchUiModel) -> Unit = {}
 ) {
     LazyColumn() {
-        for(match in state.matches) {
+        for(match in state.matches.filter { it.isGoing }) {
             item {
                 MatchCard(
                     match = match,
                     onAction = onAction,
                     onNavigationToMatch = onNavigationToMatch
-                )
+                ) {
+                    Column{
+                        Text(
+                            modifier = Modifier.padding(
+                                start = 8.dp,
+                                end = 8.dp,
+                            ),
+                            text = state.partner?.name ?: "ERROR"
+                        )
+                        Text(
+                            modifier = Modifier.padding(
+                                start = 8.dp,
+                                end = 8.dp
+                            ),
+                            text = "stats:",
+                            fontWeight = FontWeight.ExtraLight,
+                            fontSize = 10.sp
+                        )
+                        DisplayWinLoseRatio(ratio = state.winLoseRatio)
+                    }
+                }
             }
         }
     }
 }
+
+
+
 
 @Composable
 @Preview(showBackground = true)
@@ -56,15 +86,12 @@ fun MatchesScreenPreview() {
                 listOf(),
                 listOf(),
                 listOf(),
+                listOf(),
+                listOf(),
                 listOf()
             ),
             matches = listOf(
-                MatchUiModel(
-                    id = 1L,
-                    challenger = 1L,
-                    challenged = 1L,
-                    board = BoardData("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-                )
+                MatchUiModel()
             )
         ),
         onAction = {}

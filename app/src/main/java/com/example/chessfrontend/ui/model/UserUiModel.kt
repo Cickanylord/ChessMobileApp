@@ -3,14 +3,16 @@ package com.example.chessfrontend.ui.model
 import com.example.chessfrontend.data.model.UserEntity
 
 data class UserUiModel(
-    val id: Long,
-    val name: String,
-    val roles: List<String>,
-    val messagesSent: List<Long>,
-    val messagesReceived: List<Long>,
-    val challenger: List<Long>,
-    val challenged: List<Long>,
-    val friendList: List<Long>,
+    val id: Long = -1,
+    val name: String = "",
+    val roles: List<String> = emptyList(),
+    val messagesSent: List<Long> = emptyList(),
+    val messagesReceived: List<Long> = emptyList(),
+    val challenger: List<Long> = emptyList(),
+    val challenged: List<Long> = emptyList(),
+    val friendList: List<Long> = emptyList(),
+    val winedMatches: List<Long> = emptyList(),
+    val lostMatches: List<Long> = emptyList()
 )
 
 fun UserEntity.toUiModel() = UserUiModel(
@@ -22,4 +24,6 @@ fun UserEntity.toUiModel() = UserUiModel(
     challenger = challenger,
     challenged = challenged,
     friendList = friendList,
+    winedMatches = matchesWined,
+    lostMatches = matchesLost
 )

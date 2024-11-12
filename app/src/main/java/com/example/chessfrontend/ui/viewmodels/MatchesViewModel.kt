@@ -11,9 +11,12 @@ import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
+import com.example.chessfrontend.ui.model.WinLoseRatioModel
+import com.example.chessfrontend.ui.model.countWinLoseRatio
 import com.example.chessfrontend.ui.model.toUiModel
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,22 +46,43 @@ class MatchesViewModel @Inject constructor(
                 partner = Gson().fromJson(friendJson, UserUiModel::class.java)
             )
 
+
+
+
             try {
                 val matches = chessApiService.getMatchesBetweenUsers(uiState.partner!!.id)
                 uiState = uiState.copy(
                     matches = matches.map { it.toUiModel() },
+                    user = userPreferencesRepository
+                        .getUser()
+                        .first()
+                        !!.toUiModel()
                 )
+
+                uiState = uiState.copy(
+                    winLoseRatio = countWinLoseRatio(
+                        uiState.matches,
+                        uiState.user!!.id
+                    )
+                )
+
             } catch (e: Exception) {
-                Log.e("MatchesViewModel", "Error loading matches: ${e.message}")
+                Log.e("MatchesViewModel", "Error loading matchesLost: ${e.message}")
             }
         }
     }
+
+
 }
 
 data class MatchesUiState(
     val partner: UserUiModel? = null,
-    val matches: List<MatchUiModel> = listOf()
+    val user: UserUiModel? = null,
+    val matches: List<MatchUiModel> = listOf(),
+    val winLoseRatio: WinLoseRatioModel = WinLoseRatioModel(-1, -1)
 )
+
+
 
 sealed interface MatchesAction {
     object LoadMatches : MatchesAction
