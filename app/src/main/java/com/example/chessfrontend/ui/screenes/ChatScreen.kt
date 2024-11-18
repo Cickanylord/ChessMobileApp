@@ -1,6 +1,9 @@
 package com.example.chessfrontend.ui.screenes
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,14 +12,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,7 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,10 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.model.MessageUiModel
+import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.ChatAction
 import com.example.chessfrontend.ui.viewmodels.ChatUiState
 import com.example.chessfrontend.ui.viewmodels.ChatViewModel
@@ -54,10 +59,12 @@ import java.time.LocalDateTime
 
 @Composable
 fun ChatScreenRoot(
-    chatViewModel: ChatViewModel = hiltViewModel()
+    chatViewModel: ChatViewModel = hiltViewModel(),
+    onNavigationToProfile: (UserUiModel) -> Unit,
 ) {
    ChatScreenContent(
-       chatViewModel.uiState,
+       state = chatViewModel.uiState,
+       onNavigationToProfile = onNavigationToProfile,
        onAction = chatViewModel::handleAction
    )
 }
@@ -66,25 +73,37 @@ fun ChatScreenRoot(
 @Composable
 fun ChatScreenContent(
     state: ChatUiState,
-    onAction: (ChatAction) -> Unit
+    onNavigationToProfile: (UserUiModel) -> Unit,
+    onAction: (ChatAction) -> Unit,
+    displayTopBar: Boolean = true
 ) {
     val localFocusManager = LocalFocusManager.current
 
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Chat with ") }
-            )
+
+            if(displayTopBar) {
+                MyTopBar(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    onClick = { onNavigationToProfile(state.friend) },
+                    text = state.friend.name
+                )
+            }
         },
 
         content = { innerPadding ->
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                ,
                 contentPadding = innerPadding,
                 reverseLayout = true,
             ) {
                 items(state.messages) { message ->
-                    val isUserMe = message.sender != state.friend?.id
+                    val isUserMe = message.sender != state.friend.id
                     MessageItem(
                         message = message,
                         isUserMe = isUserMe
@@ -102,7 +121,6 @@ fun ChatScreenContent(
         }
     )
 }
-
 
 @Composable
 fun MessageItem(
@@ -189,7 +207,7 @@ fun MessageInputField(
 
 
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChatScreenContentPreview() {
     ChatScreenContent(
@@ -202,8 +220,11 @@ fun ChatScreenContentPreview() {
                     receiver = 4L,
                     sentDate = LocalDateTime.now()
                 ),
-            )
+            ),
+            friend = UserUiModel(name = "Demo",)
+
         ),
+        onNavigationToProfile = {},
         onAction = {}
     )
             //user = User(1, "me", listOf(), listOf(), listOf(), listOf(), listOf(), listOf()),

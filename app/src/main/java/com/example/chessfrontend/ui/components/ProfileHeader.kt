@@ -17,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.viewmodels.ProfileUiState
@@ -34,8 +36,7 @@ fun ProfileHeader(state: ProfileUiState) {
         horizontalArrangement = Arrangement.Start
 
     ) {
-        Box()
-             {
+        Box() {
             Image(
                 painter = painterResource(id = R.drawable.blank_profile_picture),
                 modifier = Modifier
@@ -70,4 +71,13 @@ fun ProfileHeader(state: ProfileUiState) {
             )
         }
     }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun MyProfileHeaderPreview() {
+    ProfileHeader(state = ProfileUiState())
 }

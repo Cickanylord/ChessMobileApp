@@ -63,7 +63,6 @@ fun MyMainMenuDrawer(
             ),
         //horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        println("color: ${MaterialTheme.colorScheme.onBackground}")
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         DividerItem(
             modifier = Modifier

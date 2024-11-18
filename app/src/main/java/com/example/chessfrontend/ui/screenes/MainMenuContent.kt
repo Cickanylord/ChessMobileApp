@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.components.DrawMatchRow
 import com.example.chessfrontend.ui.components.DrawPiece
+import com.example.chessfrontend.ui.components.MyIconButtonWithSmallText
 import com.example.chessfrontend.ui.components.MyMainMenuDrawer
 import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
@@ -53,7 +54,7 @@ import com.example.chessfrontend.ui.viewmodels.MainMenuViewModel
 fun MainMenuRoot(
     mainMenuViewModel: MainMenuViewModel,
     onNavigationToProfile: (UserUiModel) -> Unit,
-    onNavigationToOnlineGame: (MatchUiModel) -> Unit,
+    onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
     onNavigationToOfflineGame: () -> Unit,
     onNavigationToAiGame: () -> Unit
 ) {
@@ -72,7 +73,7 @@ fun MainMenuRoot(
 @Composable
 fun MainMenuContent(
     onNavigationToProfile: (UserUiModel) -> Unit,
-    onNavigationToOnlineGame: (MatchUiModel) -> Unit,
+    onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
     onNavigationToOfflineGame: () -> Unit,
     onNavigationToAiGame: () -> Unit,
     state: MainMenuState,
@@ -106,10 +107,11 @@ fun MainMenuContent(
                 modifier = Modifier
                    ,
                 topBar = {
-                    Column {
-                        Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
-                        MainMenuTopBar(onAction)
-                    }
+                    MyTopBar(
+                        onClick = {
+                            onAction(MainMenuAction.OpenDrawer)
+                        }
+                    )
                 }
             ) { padding ->
                 MainMenuBody(
@@ -126,32 +128,56 @@ fun MainMenuContent(
 }
 
 @Composable
-fun MainMenuTopBar(onAction: (MainMenuAction) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-    ) {
-        Image(
-            modifier = Modifier
-                .padding(4.dp)
-                .padding(start = 12.dp)
-                .clickable { onAction(MainMenuAction.OpenDrawer) }
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .clip(RoundedCornerShape(8.dp)),
-            painter = painterResource(id = R.drawable.blank_profile_picture),
-            contentDescription = "profile"
-        )
+fun MyTopBar(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String = "",
+) {
+    Column {
+        Spacer(Modifier.windowInsetsPadding(WindowInsets.statusBars))
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+
+            Image(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .padding(start = 12.dp)
+                    .clickable { onClick() }
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clip(RoundedCornerShape(8.dp)),
+                painter = painterResource(id = R.drawable.blank_profile_picture),
+                contentDescription = "profile"
+            )
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 8.dp),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+                text = text
+            )
+
+
+            MyIconButtonWithSmallText(
+                modifier = Modifier.weight(2f),
+                text = "",
+                onClick = {},
+                icon = painterResource(id = R.drawable.baseline_play_arrow_24),
+            )
+        }
     }
 }
 
 @Composable
 fun MainMenuBody(
-    onNavigationToOnlineGame: (MatchUiModel) -> Unit = {},
+    onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
     onNavigationToOfflineGame: () -> Unit = {},
     onNavigationToAiGame: () -> Unit = {},
     padding: PaddingValues,
@@ -170,7 +196,7 @@ fun MainMenuBody(
                 gameModeDescription = R.string.vs_your_friend,
                 gameModeImage = if (isSystemInDarkTheme()) R.drawable.white_rook else R.drawable.black_rook,
                 gameDescription = state.continueMatchBoard.board,
-                onClick = { onNavigationToOnlineGame(state.continueMatchBoard) }
+                onClick = { onNavigationToOnlineGame(Pair(state.continueMatchBoard.id, findPartnerId(state.user!!, state.continueMatchBoard))) }
             )
 
 
@@ -203,6 +229,18 @@ fun MainMenuBody(
     }
 }
 
+fun findPartnerId(
+    user: UserUiModel,
+    match: MatchUiModel
+): Long =
+    if (user.id == match.challenged) {
+        match.challenger
+
+    } else {
+        match.challenged
+    }
+
+
 @Composable
 fun MainMenuRowCard(
     gameModeText: Int,
@@ -219,6 +257,7 @@ fun MainMenuRowCard(
     ) {
         DrawMatchRow(
             match = MatchUiModel(board = gameDescription)
+
         ) {
             Box(
                 modifier = Modifier

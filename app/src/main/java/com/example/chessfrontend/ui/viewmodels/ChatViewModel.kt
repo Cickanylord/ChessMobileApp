@@ -7,7 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.UserRepository
+import com.example.chessfrontend.data.model.MessageEntity
 import com.example.chessfrontend.data.model.MessageOutEntity
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.example.chessfrontend.ui.model.MessageUiModel
@@ -15,7 +16,6 @@ import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.model.toUiModel
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -27,8 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chessApiService: ChessApiService,
-    private val userPreferencesRepository: UserPreferencesRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val userRepository: UserRepository,
 ): ViewModel() {
     var uiState: ChatUiState by mutableStateOf(ChatUiState())
         private set
@@ -40,20 +40,20 @@ class ChatViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val friendJson = savedStateHandle.get<String>("userJson")
-            val user = userPreferencesRepository.getUser().first()!!
+            val friendId = savedStateHandle.get<Long>("userId")
+            println(friendId)
 
             uiState = uiState.copy(
-                friend = Gson().fromJson(friendJson, UserUiModel::class.java),
-                user = user.toUiModel()
+                friend = userRepository.combinedUsers.value?.find { it.id == friendId }?.toUiModel()!!,
+                user = userRepository.profile.value?.toUiModel()!!
             )
 
-            buildWebSocket(user.id)
-            loadMessages(uiState.friend?.id ?: -1L)
+            buildWebSocket(uiState.user.id)
+            loadMessages(uiState.friend.id)
         }
     }
 
-    fun buildWebSocket(userId: Long) {
+    private fun buildWebSocket(userId: Long) {
         val request = Request.Builder()
             .url("ws://192.168.0.89:8080/chat?${userId}")
             .build()
@@ -74,13 +74,10 @@ class ChatViewModel @Inject constructor(
             try {
                 val response = chessApiService.sendMessage(
                     MessageOutEntity(
-                    receiverId = uiState.friend?.id ?: -1L,
+                    receiverId = uiState.friend.id,
                     text = message
                     )
                 )
-//                loadMessages(uiState.friend?.id ?: -1L)
-//                Log.d("ChatViewModel", "Sent message: $message")
-
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Error sending message: ${e.message}")
             }
@@ -116,16 +113,13 @@ class ChatViewModel @Inject constructor(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             Log.d("ChatViewModel", "Received message: $text")
-            loadMessages(uiState.friend?.id ?: -1L)
-            /*
+            //loadMessages(uiState.friend.id)
             val message = Gson().fromJson(text, MessageEntity::class.java).toUiModel()
-            if (message.sender == uiState.friend?.id) {
-            uiState = uiState.copy(
-                messages = listOf(message) + uiState.messages
-            )
-                }
-
-             */
+                if (message.sender == uiState.friend.id || message.sender == uiState.user.id) {
+                uiState = uiState.copy(
+                    messages = listOf(message) + uiState.messages
+                )
+            }
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -142,8 +136,8 @@ class ChatViewModel @Inject constructor(
 
 data class ChatUiState(
     val messages: List<MessageUiModel> = listOf(),
-    val friend: UserUiModel? = null,
-    val user: UserUiModel? = null
+    val friend: UserUiModel = UserUiModel(),
+    val user: UserUiModel = UserUiModel(),
 )
 
 sealed interface ChatAction {

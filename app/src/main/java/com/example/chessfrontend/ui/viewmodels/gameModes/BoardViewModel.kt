@@ -2,8 +2,7 @@ package com.example.chessfrontend.ui.viewmodels.gameModes
 
 import ai_engine.board.BoardData
 import ai_engine.board.pieces.Piece
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
 
 
@@ -26,16 +25,18 @@ interface BoardViewModel {
 sealed interface BoardAction {
     data class PieceClicked(val piece: Piece) : BoardAction
     data class Step(val move: Pair<Int, Int>) : BoardAction
+    data object OnStepSoundOver : BoardAction
 }
 
 data class BoardUiState(
-    var boardState: MutableState<BoardData> = mutableStateOf(BoardData("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")),
+    var boardState: MatchUiModel = MatchUiModel(),
     val legalMoves: List<Pair<Int, Int>> = listOf(),
     val clickedPiece: Piece? = null,
     val user: UserUiModel? = null,
     val opponent: UserUiModel? = null,
-    val matchId: Long = -1L
+    val matchId: Long = -1L,
+    val playMoveSound: Boolean = false
 ) {
     val board: BoardData
-        get() = boardState.value
+        get() = boardState.board
 }

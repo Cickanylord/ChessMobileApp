@@ -15,8 +15,10 @@ import com.example.chessfrontend.ui.screenes.ChatScreenRoot
 import com.example.chessfrontend.ui.screenes.FriendListScreenRoot
 import com.example.chessfrontend.ui.screenes.MainMenuRoot
 import com.example.chessfrontend.ui.screenes.MatchesScreenRoot
+import com.example.chessfrontend.ui.screenes.OnlineBoardScreenRoot
 import com.example.chessfrontend.ui.screenes.ProfileScreenRoot
 import com.example.chessfrontend.ui.screenes.UserListScreenRoot
+import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 import com.example.chessfrontend.ui.viewmodels.gameModes.AiBoardViewModelImpl
 import com.example.chessfrontend.ui.viewmodels.gameModes.OfflineBoardViewModelImpl
 import com.example.chessfrontend.ui.viewmodels.gameModes.OnlineBoardViewModelImpl
@@ -48,7 +50,7 @@ fun MainNavHost(
                     navController.navigate("$profileRoute/${user.id}")
                 },
                 onNavigationToOnlineGame = { match ->
-                    navController.navigate("$onlineGameRoute/${match.id}")
+                    navController.navigate("$onlineGameRoute/${match.first}/${match.second}")
                 },
                 onNavigationToOfflineGame = { navController.navigate(offlineGameRoute) },
                 onNavigationToAiGame = { navController.navigate(aiGameRoute) }
@@ -59,65 +61,48 @@ fun MainNavHost(
             route = "$profileRoute/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.LongType })
         ) {
+
             ProfileScreenRoot(
                 onNavigationToFriendList = {navController.navigate(friendListRoute)},
                 onNavigationToGames = {},
                 onNavigationToChat = { user ->
-                    val userJson = Gson().toJson(user)
-                    navController.navigate("$chatRoute/$userJson")
+                    navController.navigate("$chatRoute/${user.id}")
                 },
                 onNavigationToOnlineGame = { match ->
-                    navController.navigate("$onlineGameRoute/${match.id}")
+                    navController.navigate("$onlineGameRoute/${match.first}/${match.second}")
                 },
                 profileViewModel = hiltViewModel()
             )
         }
 
-        composable(friendListRoute) {
-            FriendListScreenRoot(
-                friendliestViewModel = hiltViewModel(),
-                onNavigationToChat = { user ->
-                    val userJson = Gson().toJson(user)
-                    navController.navigate("$chatRoute/$userJson")
-                },
-                onNavigationToUsers = {navController.navigate(lisOfUsersRoute)},
-                onNavigationToMatches = { user ->
-                    val userJson = Gson().toJson(user)
-                    navController.navigate("$matchesRoute/$userJson")
-                }
-            )
-        }
+
 
         composable(
-            route = "$matchesRoute/{userJson}",
-            arguments = listOf(navArgument("userJson") { type = NavType.StringType })
-            ) {
-            MatchesScreenRoot(
-                matchesViewModel = hiltViewModel(),
-                onNavigationToMatch = { match ->
-                    navController.navigate("$onlineGameRoute/${match.id}")
-                }
-            )
-        }
-
-        composable(
-            route = "$chatRoute/{userJson}",
-            arguments = listOf(navArgument("userJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val userJson = backStackEntry.arguments?.getString("userJson") ?: ""
-            println("ChatId: $userJson")
+            route = "$chatRoute/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) {
             ChatScreenRoot(
                 chatViewModel = hiltViewModel(),
+                onNavigationToProfile = { user ->
+                    navController.navigate("$profileRoute/${user.id}")
+                }
             )
         }
 
         composable(
-            route = "$onlineGameRoute/{matchId}",
-            arguments = listOf(navArgument("matchId") { type = NavType.LongType }),
+            route = "$onlineGameRoute/{matchId}/{userId}",
+            arguments = listOf(
+                navArgument("matchId") { type = NavType.LongType },
+                navArgument("userId") { type = NavType.LongType }
+            ),
         ) { backStackEntry ->
             val matchJson = backStackEntry.arguments?.getString("matchId") ?: ""
-            BoardScreenRoot(
-                viewModel = hiltViewModel<OnlineBoardViewModelImpl>()
+            OnlineBoardScreenRoot(
+                boardViewModel = hiltViewModel<OnlineBoardViewModelImpl>(),
+                chatViewModel = hiltViewModel(),
+                onNavigationToProfile = { user ->
+                    navController.navigate("$profileRoute/${user.id}")
+                }
             )
 
         }

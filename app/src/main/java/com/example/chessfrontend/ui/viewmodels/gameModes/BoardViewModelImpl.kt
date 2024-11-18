@@ -19,7 +19,14 @@ open class BoardViewModelImpl @Inject constructor() : ViewModel(), BoardViewMode
         when (action) {
             is BoardAction.Step -> step(action.move)
             is BoardAction.PieceClicked -> pieceClicked(action.piece)
+            is BoardAction.OnStepSoundOver -> onStepSoundOver()
         }
+    }
+
+    private fun onStepSoundOver() {
+        uiState = uiState.copy(
+            playMoveSound = false
+        )
     }
 
     /**
@@ -47,7 +54,8 @@ open class BoardViewModelImpl @Inject constructor() : ViewModel(), BoardViewMode
 
     override fun step(move: Pair<Int, Int>) {
         uiState.let { state ->
-            state.board
+            state
+                .board
                 .boardLogic
                 .move(state.clickedPiece!!, move)
 

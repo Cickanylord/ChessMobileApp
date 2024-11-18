@@ -64,11 +64,12 @@ class OnlineBoardViewModelImpl @Inject constructor(
         viewModelScope.launch {
             matchRepository.matches.observeForever() { matches ->
                 val currentMatch = matches.find { it.id == uiState.matchId }?.toUiModel()!!
+
                 uiState = uiState.copy(
-                    boardState = mutableStateOf(currentMatch.board),
+                    boardState = currentMatch,
                     clickedPiece = null,
                     legalMoves = listOf(),
-
+                    playMoveSound = currentMatch.board.toString() == uiState.board.toString()
                 )
             }
         }

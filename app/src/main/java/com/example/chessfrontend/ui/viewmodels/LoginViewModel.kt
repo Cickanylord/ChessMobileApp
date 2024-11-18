@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
                 setToken(token.accessToken)
             } catch (e: Exception) {
                 Log.e("Login", "$e")
-                SetToastMessage("Login failed")
+                setToastMessage("Login failed")
                 toggleToast()
             }
         }
@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    private fun SetToastMessage(message: String) {
+    private fun setToastMessage(message: String) {
         uiState = uiState.copy(
             toastMessage = message
         )

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.example.chessfrontend.ui.model.MatchUiModel
+import com.example.chessfrontend.ui.model.UserUiModel
 
 @Composable
 fun DrawMatchRow(
@@ -40,8 +41,7 @@ fun DrawMatchRow(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .height(tileSize * 8.dp),
-            contentAlignment = Alignment.BottomCenter
+                .height(tileSize * 8.dp)
         ) {
             content()
         }

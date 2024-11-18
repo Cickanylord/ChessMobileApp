@@ -10,13 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.ui.model.MatchUiModel
+import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.MatchesAction
 
 @Composable
 fun MatchCard(
     match: MatchUiModel,
     onAction: (MatchesAction) -> Unit,
-    onNavigationToMatch: (match: MatchUiModel) -> Unit = {},
+    onClick: () -> Unit = {},
     tileSize: Int = 20,
     content : @Composable () -> Unit = {}
 ) {
@@ -24,7 +25,7 @@ fun MatchCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable(onClick = { onNavigationToMatch(match) })
+            .clickable(onClick = { onClick() })
         ,
         shape = RoundedCornerShape(8.dp)
     ) {

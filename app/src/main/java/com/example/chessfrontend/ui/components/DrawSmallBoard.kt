@@ -12,14 +12,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.ui.model.MatchUiModel
+import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.gameModes.BoardUiState
 
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun DrawSmallBoard(
     modifier: Modifier = Modifier,
     tileSize: Int,
-    match: MatchUiModel = MatchUiModel()
+    match: MatchUiModel = MatchUiModel(),
 ) {
     Box(
         modifier = modifier
@@ -33,7 +33,7 @@ fun DrawSmallBoard(
     ) {
         BoardScreenContent(
             state = BoardUiState(
-                boardState = mutableStateOf(match.board)
+                boardState = match,
             ),
             onAction = {},
             tileSize = tileSize,

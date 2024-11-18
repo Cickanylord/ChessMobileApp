@@ -1,5 +1,7 @@
 package com.example.chessfrontend.ui.screenes
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,12 +42,10 @@ fun ProfileScreenRoot(
     onNavigationToFriendList: () -> Unit,
     onNavigationToGames: () -> Unit,
     onNavigationToChat: (UserUiModel) -> Unit,
-    onNavigationToOnlineGame: (MatchUiModel) -> Unit,
+    onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
     profileViewModel: ProfileViewModel,
 ) {
     ProfileScreen(
-        onNavigationToFriendList = onNavigationToFriendList,
-        onNavigationToGames = onNavigationToGames,
         onNavigationToChat = onNavigationToChat,
         onNavigationToOnlineGame = onNavigationToOnlineGame,
         state = profileViewModel.uiState,
@@ -56,10 +56,8 @@ fun ProfileScreenRoot(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    onNavigationToFriendList: () -> Unit,
-    onNavigationToGames: () -> Unit,
     onNavigationToChat: (UserUiModel) -> Unit,
-    onNavigationToOnlineGame: (MatchUiModel) -> Unit,
+    onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
     state: ProfileUiState,
     onAction: (ProfileAction) -> Unit
 ) {
@@ -101,7 +99,7 @@ fun ProfileScreen(
                 MatchCard(
                     match = match,
                     onAction = {},
-                    onNavigationToMatch = onNavigationToOnlineGame
+                    onClick = {onNavigationToOnlineGame(Pair(match.id, findPartnerId(state.myProfile, match)))}
                 ) {
                     ProfileMatchDescription(
                         state = state,
@@ -118,7 +116,7 @@ fun ProfileScreen(
                 MatchCard(
                     match = match,
                     onAction = {},
-                    onNavigationToMatch = {}
+                    onClick = {}
                 ) {
                     ProfileMatchDescription(
                         state = state,
@@ -136,13 +134,36 @@ fun ProfileMatchDescription(
     match: MatchUiModel
 
 ) {
-    Column{
-        Text(
-            modifier = Modifier.padding(
-                start = 8.dp,
-                end = 8.dp,
-            ),
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        if(match.isGoing.not()) {
+            Text(
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                ),
+                text = "Winner:",
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp
+            )
 
+            Text(
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                ),
+                text = state.users.find { it.id == match.winner }?.name ?: "Unknown",
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            modifier = Modifier
+                .padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                ),
             text = "${state.users.find { it.id == match.challenger }?.name} vs ${state.users.find { it.id == match.challenged }?.name}"
         )
 
@@ -187,8 +208,6 @@ fun ProfileScreenSeparator(text: String) {
 @Composable
 fun ProfileScreenPreview(){
     ProfileScreen(
-        onNavigationToFriendList = {},
-        onNavigationToGames = {},
         onNavigationToChat = {},
         onNavigationToOnlineGame = {},
         state = ProfileUiState(
@@ -196,9 +215,6 @@ fun ProfileScreenPreview(){
                 name = "John Doe"
             ),
             matches = listOf(
-                MatchUiModel(),
-                MatchUiModel(),
-                MatchUiModel(),
                 MatchUiModel(isGoing = false),
                 MatchUiModel(isGoing = false),
                 MatchUiModel(isGoing = false),

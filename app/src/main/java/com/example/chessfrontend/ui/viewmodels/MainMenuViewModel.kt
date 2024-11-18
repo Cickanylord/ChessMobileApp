@@ -78,6 +78,9 @@ class MainMenuViewModel @Inject constructor(
                     offlineBoard = matches.find { it.id == -3L }?.toUiModel() ?: MatchUiModel(),
                 )
             }
+            if (uiState.continueMatchBoard.isGoing.not()) {
+                matchRepository.getMatches()
+            }
         }
     }
 

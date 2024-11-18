@@ -43,7 +43,7 @@ fun MatchesScreenContent(
                 MatchCard(
                     match = match,
                     onAction = onAction,
-                    onNavigationToMatch = onNavigationToMatch
+                    onClick = { onNavigationToMatch(match) }
                 ) {
                     Column{
                         Text(

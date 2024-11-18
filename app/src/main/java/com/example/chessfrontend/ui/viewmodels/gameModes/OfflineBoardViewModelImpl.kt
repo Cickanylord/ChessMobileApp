@@ -4,6 +4,7 @@ import ai_engine.board.BoardData
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.ui.model.MatchUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -25,7 +26,9 @@ class OfflineBoardViewModelImpl @Inject constructor(
             }
 
             uiState = uiState.copy(
-                boardState = mutableStateOf(BoardData(game))
+                boardState = MatchUiModel(
+                    board = BoardData(game)
+                )
             )
         }
     }
