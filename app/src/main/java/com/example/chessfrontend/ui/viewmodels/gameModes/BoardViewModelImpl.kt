@@ -1,6 +1,10 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
 import ai_engine.board.pieces.Piece
+import ai_engine.board.pieces.PieceFactory
+import ai_engine.board.pieces.Queen
+import ai_engine.board.pieces.enums.PieceColor
+import ai_engine.board.pieces.enums.PieceName
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,7 +24,23 @@ open class BoardViewModelImpl @Inject constructor() : ViewModel(), BoardViewMode
             is BoardAction.Step -> step(action.move)
             is BoardAction.PieceClicked -> pieceClicked(action.piece)
             is BoardAction.OnStepSoundOver -> onStepSoundOver()
+            is BoardAction.OnPromotion -> onPromotion(action.pieceName)
         }
+    }
+
+    override fun onPromotion(pieceName: PieceName) {
+        uiState.boardState.board.addPiece(
+            PieceFactory.makePiece(
+                pieceName,
+                uiState.clickedPiece!!.pieceColor,
+                uiState.clickedPiece!!.position
+            )
+        )
+        uiState = uiState.copy(
+            isWhitePromoting = false,
+            isBlackPromoting = false,
+            clickedPiece = null,
+        )
     }
 
     private fun onStepSoundOver() {
@@ -59,10 +79,21 @@ open class BoardViewModelImpl @Inject constructor() : ViewModel(), BoardViewMode
                 .boardLogic
                 .move(state.clickedPiece!!, move)
 
-            uiState = uiState.copy(
-                clickedPiece = null,
-                legalMoves = listOf()
-            )
+            val isWhitePromoting =  state.clickedPiece.name == PieceName.PAWN && move.first == 0
+            val isBlackPromoting =  state.clickedPiece.name == PieceName.PAWN && move.first == 7
+
+            uiState = if (isWhitePromoting || isBlackPromoting) {
+                uiState.copy(
+                    isWhitePromoting = isWhitePromoting,
+                    isBlackPromoting = isBlackPromoting,
+                    legalMoves = listOf()
+                )
+            } else {
+                uiState.copy(
+                    clickedPiece = null,
+                    legalMoves = listOf(),
+                )
+            }
         }
         saveGame()
     }

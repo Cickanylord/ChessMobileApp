@@ -1,32 +1,29 @@
 package com.example.chessfrontend.ui
 
 import android.content.Intent
-import android.content.res.Resources.Theme
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.ContextCompat
-import androidx.core.text.color
 import androidx.core.view.ViewCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chessfrontend.MainActivity
-import com.example.chessfrontend.R
+import com.example.chessfrontend.data.netwrok.ChessApiService
+import com.example.chessfrontend.ui.components.UploadPictureRoot
+import com.example.chessfrontend.ui.components.UploadPictureScreen
 import com.example.chessfrontend.ui.navigation.MainNavHost
 import com.example.chessfrontend.ui.theme.ChessFrontEndTheme
-import com.example.chessfrontend.ui.viewmodels.ChatViewModel
 
-import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainMenuActivity : ComponentActivity() {
+    @Inject
+    lateinit var chessApiService: ChessApiService
 
 
     @OptIn(ExperimentalMaterial3Api::class)

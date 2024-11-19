@@ -87,6 +87,7 @@ fun ChatScreenContent(
                 MyTopBar(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
                     onClick = { onNavigationToProfile(state.friend) },
+                    user = state.friend,
                     text = state.friend.name
                 )
             }

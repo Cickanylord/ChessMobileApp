@@ -7,14 +7,17 @@ import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -33,14 +37,18 @@ import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.viewmodels.gameModes.BoardAction
 import com.example.chessfrontend.ui.viewmodels.gameModes.BoardUiState
 import com.example.chessfrontend.ui.viewmodels.gameModes.BoardViewModelImpl
-import kotlinx.coroutines.delay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BoardScreenRoot(
     viewModel: BoardViewModelImpl,
 ) {
-    Scaffold {
+    Box (
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+
+    ){
         BoardScreenContent(
             state = viewModel.uiState,
             onAction = viewModel::handleAction
@@ -56,6 +64,7 @@ fun BoardScreenContent(
     clickable: Boolean = true
 ) {
     val rotation: Float = if(state.boardState.challenged == state.user?.id && state.user.id != -1L) 180f else 0f
+    val context = LocalContext.current
 
     if (state.playMoveSound) {
         PlaySoundEffect(
@@ -68,8 +77,13 @@ fun BoardScreenContent(
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .graphicsLayer { rotationZ = rotation },
-
+            .graphicsLayer { rotationZ = rotation }
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clip(RoundedCornerShape(8.dp))
     ) {
         Column {
             for (i in 0 until 8) {
@@ -137,7 +151,52 @@ fun BoardScreenContent(
             }
         }
     }
+    if(state.isWhitePromoting || state.isBlackPromoting) {
+        PawnPromotion(onAction, state)
+    }
 }
+
+@Composable
+fun PawnPromotion(
+    onAction: (BoardAction) -> Unit,
+    state: BoardUiState
+) {
+
+    Row (
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(8.dp)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.background)
+
+    ){
+        val activeColor: PieceColor = state.clickedPiece!!.pieceColor
+
+        val promotionOptions = listOf(
+            PromotionOption(PieceName.QUEEN, if (activeColor == PieceColor.WHITE) R.drawable.white_queen else R.drawable.black_queen, "Queen"),
+            PromotionOption(PieceName.ROOK, if (activeColor == PieceColor.WHITE) R.drawable.white_rook else R.drawable.black_rook, "Rook"),
+            PromotionOption(PieceName.BISHOP, if (activeColor == PieceColor.WHITE) R.drawable.white_bishop else R.drawable.black_bishop, "Bishop"),
+            PromotionOption(PieceName.KNIGHT, if (activeColor == PieceColor.WHITE) R.drawable.white_knight else R.drawable.black_knight, "Knight")
+        )
+        promotionOptions.forEach { option ->
+            Image(
+                modifier = Modifier
+                    .clickable(onClick = { onAction(BoardAction.OnPromotion(option.pieceName)) }),
+                painter = painterResource(option.drawableRes),
+                contentDescription = option.contentDescription
+            )
+        }
+
+    }
+}
+
+data class PromotionOption(val pieceName: PieceName, val drawableRes: Int, val contentDescription: String)
+
 
 @Composable
 fun PlaySoundEffect(
@@ -176,14 +235,18 @@ fun Piece.getPieceImage(): Int {
 
 
 @SuppressLint("UnrememberedMutableState")
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
 @Composable
 fun BoardScreenPreview() {
  BoardScreenContent(
      state = BoardUiState(
          boardState = MatchUiModel(),
          legalMoves = listOf(Pair(5, 1), Pair(4, 1)),
-         clickedPiece = null
+         clickedPiece = null,
+         isWhitePromoting = true
      ),
      onAction = {}
  )

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,10 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.theme.DrawerBackgroundColor
@@ -109,9 +113,8 @@ private fun DrawerItemHeader(text: String) {
 @Composable
 private fun FriendItem(
     user: UserUiModel,
-    onFriendClicked: (UserUiModel) -> Unit)
-
-{
+    onFriendClicked: (UserUiModel) -> Unit
+) {
     Row(
         modifier = Modifier
             .height(56.dp)
@@ -122,18 +125,11 @@ private fun FriendItem(
         verticalAlignment = CenterVertically
     ) {
 
-        Image(
-            painter = painterResource(id = R.drawable.blank_profile_picture),
+        MyCircularProfilePicture(
             modifier = Modifier
-                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-                .clip(CircleShape)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                    shape = CircleShape
-                )
-            ,
-            contentDescription = "profile_picture"
+                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
+            model = user.profilePicture,
+            isClickable = false
         )
         Text(
             text = user.name,
@@ -142,7 +138,6 @@ private fun FriendItem(
             color = Color.White
         )
     }
-
 }
 
 @Composable
@@ -157,26 +152,19 @@ fun ProfileBoxDrawer(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        val painter: Painter = rememberAsyncImagePainter(
+            model = user?.profilePicture,
+            placeholder = painterResource(id = R.drawable.blank_profile_picture)
+        )
 
-        Image(
+        MyCircularProfilePicture(
             modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(0.45f)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                    shape = CircleShape
-                )
-                .clip(CircleShape)
-                .clickable(
-                    onClick = {
-                        onAction(MainMenuAction.CloseDrawer)
-                        onProfileClicked(user ?: UserUiModel())
-                    }
-                )
-            ,
-            painter = painterResource(id = R.drawable.blank_profile_picture),
-            contentDescription = "profile"
+                .fillMaxWidth(0.45f),
+            model = user?.profilePicture ?: UserUiModel().profilePicture,
+            onClick = {
+                onAction(MainMenuAction.CloseDrawer)
+                onProfileClicked(user ?: UserUiModel())
+            }
         )
 
 

@@ -1,5 +1,7 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
+import ai_engine.board.pieces.PieceFactory
+import ai_engine.board.pieces.enums.PieceName
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -44,18 +46,54 @@ class OnlineBoardViewModelImpl @Inject constructor(
         }
     }
 
+    override fun onPromotion(pieceName: PieceName) {
+        uiState.boardState.board.addPiece(
+            PieceFactory.makePiece(
+                pieceName,
+                uiState.clickedPiece!!.pieceColor,
+                uiState.clickedPiece!!.position
+            )
+        )
+        uiState = uiState.copy(
+            isWhitePromoting = false,
+            isBlackPromoting = false,
+        )
+
+        viewModelScope.launch {
+            matchRepository.step(
+                StepRequestEntity(
+                    matchId = uiState.matchId,
+                    board =  uiState.boardState.board.toString(),
+                )
+            )
+        }
+
+
+    }
+
     override fun step(move: Pair<Int, Int>) {
         val queryBoard = uiState.board
         queryBoard
             .boardLogic
             .move(queryBoard.getPiece(uiState.clickedPiece!!.position), move)
 
-        viewModelScope.launch {
-            matchRepository.step(
-                StepRequestEntity(
-                    matchId = uiState.matchId,
-                    board = queryBoard.toString()
+        val isWhitePromoting = queryBoard.board[0].any{ it.piece?.name == PieceName.PAWN }
+        val isBlackPromoting = queryBoard.board[7].any{ it.piece?.name == PieceName.PAWN }
+
+        if(!isWhitePromoting && !isBlackPromoting) {
+            viewModelScope.launch {
+                matchRepository.step(
+                    StepRequestEntity(
+                        matchId = uiState.matchId,
+                        board = queryBoard.toString(),
+                    )
                 )
+            }
+        } else {
+            uiState = uiState.copy(
+                isWhitePromoting = isWhitePromoting,
+                isBlackPromoting = isBlackPromoting,
+                legalMoves = listOf()
             )
         }
     }
@@ -67,9 +105,11 @@ class OnlineBoardViewModelImpl @Inject constructor(
 
                 uiState = uiState.copy(
                     boardState = currentMatch,
-                    clickedPiece = null,
+
                     legalMoves = listOf(),
-                    playMoveSound = currentMatch.board.toString() == uiState.board.toString()
+                    playMoveSound = currentMatch.board.toString() == uiState.board.toString(),
+                    isWhitePromoting = currentMatch.board.board[0].any{ it.piece?.name == PieceName.PAWN },
+                    isBlackPromoting = currentMatch.board.board[7].any{ it.piece?.name == PieceName.PAWN }
                 )
             }
         }

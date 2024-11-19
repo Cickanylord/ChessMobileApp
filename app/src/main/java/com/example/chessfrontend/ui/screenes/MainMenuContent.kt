@@ -1,6 +1,8 @@
 package com.example.chessfrontend.ui.screenes
 
 import ai_engine.board.BoardData
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,22 +36,31 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.chessfrontend.R
 import com.example.chessfrontend.ui.components.DrawMatchRow
 import com.example.chessfrontend.ui.components.DrawPiece
 import com.example.chessfrontend.ui.components.MyIconButtonWithSmallText
 import com.example.chessfrontend.ui.components.MyMainMenuDrawer
+import com.example.chessfrontend.ui.components.MyRectangularProfilePicture
 import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.MainMenuAction
 import com.example.chessfrontend.ui.viewmodels.MainMenuState
 import com.example.chessfrontend.ui.viewmodels.MainMenuViewModel
+import kotlinx.coroutines.CoroutineStart
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun MainMenuRoot(
@@ -110,8 +122,10 @@ fun MainMenuContent(
                     MyTopBar(
                         onClick = {
                             onAction(MainMenuAction.OpenDrawer)
-                        }
+                        },
+                        user = state.user ?: UserUiModel(),
                     )
+
                 }
             ) { padding ->
                 MainMenuBody(
@@ -131,6 +145,7 @@ fun MainMenuContent(
 fun MyTopBar(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    user: UserUiModel,
     text: String = "",
 ) {
     Column {
@@ -141,20 +156,13 @@ fun MyTopBar(
                 .height(50.dp)
         ) {
 
-            Image(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .padding(start = 12.dp)
-                    .clickable { onClick() }
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clip(RoundedCornerShape(8.dp)),
-                painter = painterResource(id = R.drawable.blank_profile_picture),
-                contentDescription = "profile"
+
+            MyRectangularProfilePicture(
+                user = user,
+                onClick = onClick,
             )
+
+
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

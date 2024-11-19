@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.chessfrontend.ui.components.BoardScreenRoot
+import com.example.chessfrontend.ui.components.UploadPictureRoot
 import com.example.chessfrontend.ui.screenes.ChatScreenRoot
 import com.example.chessfrontend.ui.screenes.FriendListScreenRoot
 import com.example.chessfrontend.ui.screenes.MainMenuRoot
@@ -33,6 +34,7 @@ private const val friendListRoute = "friend_list"
 private const val chatRoute = "chat"
 private const val matchesRoute = "matchesLost"
 private const val lisOfUsersRoute = "list_of_users"
+private const val profilePictureUploadRoute = "profile_picture_upload"
 
 @Composable
 fun MainNavHost(
@@ -63,15 +65,15 @@ fun MainNavHost(
         ) {
 
             ProfileScreenRoot(
-                onNavigationToFriendList = {navController.navigate(friendListRoute)},
-                onNavigationToGames = {},
                 onNavigationToChat = { user ->
                     navController.navigate("$chatRoute/${user.id}")
                 },
                 onNavigationToOnlineGame = { match ->
                     navController.navigate("$onlineGameRoute/${match.first}/${match.second}")
                 },
-                profileViewModel = hiltViewModel()
+                onNavigationToProfilePictureUpload = {navController.navigate(profilePictureUploadRoute)},
+                profileViewModel = hiltViewModel(),
+
             )
         }
 
@@ -105,6 +107,11 @@ fun MainNavHost(
                 }
             )
 
+        }
+        composable(profilePictureUploadRoute) {
+            UploadPictureRoot(
+                uploadImageViewModel = hiltViewModel()
+            )
         }
 
         composable(offlineGameRoute) {

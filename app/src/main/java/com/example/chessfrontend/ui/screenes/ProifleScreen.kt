@@ -1,7 +1,6 @@
 package com.example.chessfrontend.ui.screenes
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,17 +36,19 @@ import com.example.chessfrontend.ui.viewmodels.ProfileAction
 import com.example.chessfrontend.ui.viewmodels.ProfileUiState
 import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
 
+
+
 @Composable
 fun ProfileScreenRoot(
-    onNavigationToFriendList: () -> Unit,
-    onNavigationToGames: () -> Unit,
     onNavigationToChat: (UserUiModel) -> Unit,
     onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
+    onNavigationToProfilePictureUpload: () -> Unit,
     profileViewModel: ProfileViewModel,
 ) {
     ProfileScreen(
         onNavigationToChat = onNavigationToChat,
         onNavigationToOnlineGame = onNavigationToOnlineGame,
+        onNavigationToProfilePictureUpload = onNavigationToProfilePictureUpload,
         state = profileViewModel.uiState,
         onAction = profileViewModel::handleAction
     )
@@ -58,6 +59,7 @@ fun ProfileScreenRoot(
 fun ProfileScreen(
     onNavigationToChat: (UserUiModel) -> Unit,
     onNavigationToOnlineGame: (Pair<Long, Long>) -> Unit,
+    onNavigationToProfilePictureUpload: () -> Unit,
     state: ProfileUiState,
     onAction: (ProfileAction) -> Unit
 ) {
@@ -74,7 +76,10 @@ fun ProfileScreen(
             // Profile Header
             item {
                 ProfileHeader(
-                    state = state
+                    state = state,
+                    onCLick = {
+                        onNavigationToProfilePictureUpload()
+                    }
                 )
             }
 
@@ -220,6 +225,7 @@ fun ProfileScreenPreview(){
                 MatchUiModel(isGoing = false),
             )
         ),
+        onNavigationToProfilePictureUpload = {},
         onAction = {}
     )
 }

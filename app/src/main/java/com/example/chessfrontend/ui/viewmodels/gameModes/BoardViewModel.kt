@@ -2,6 +2,8 @@ package com.example.chessfrontend.ui.viewmodels.gameModes
 
 import ai_engine.board.BoardData
 import ai_engine.board.pieces.Piece
+import ai_engine.board.pieces.enums.PieceColor
+import ai_engine.board.pieces.enums.PieceName
 import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
 
@@ -20,12 +22,15 @@ interface BoardViewModel {
     fun step(move: Pair<Int, Int>)
 
     fun saveGame()
+
+    fun onPromotion(pieceName: PieceName)
 }
 
 sealed interface BoardAction {
     data class PieceClicked(val piece: Piece) : BoardAction
     data class Step(val move: Pair<Int, Int>) : BoardAction
     data object OnStepSoundOver : BoardAction
+    data class OnPromotion(val pieceName: PieceName): BoardAction
 }
 
 data class BoardUiState(
@@ -35,7 +40,9 @@ data class BoardUiState(
     val user: UserUiModel? = null,
     val opponent: UserUiModel? = null,
     val matchId: Long = -1L,
-    val playMoveSound: Boolean = false
+    val playMoveSound: Boolean = false,
+    val isWhitePromoting: Boolean = false,
+    val isBlackPromoting: Boolean = false,
 ) {
     val board: BoardData
         get() = boardState.board

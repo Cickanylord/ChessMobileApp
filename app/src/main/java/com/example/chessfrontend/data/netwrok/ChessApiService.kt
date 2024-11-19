@@ -11,10 +11,13 @@ import com.example.chessfrontend.data.model.UserAuth
 import com.example.chessfrontend.data.model.UserEntity
 import com.example.chessfrontend.data.model.UserPost
 import com.example.chessfrontend.ui.viewmodels.gameModes.FenDTO
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ChessApiService {
@@ -103,5 +106,9 @@ interface ChessApiService {
 
     @POST("/api/chessMatch")
     suspend fun postMatch(@Body matchRequest: MatchRequestEntity): MatchEntity
+
+    @POST("/api/image")
+    @Multipart
+    suspend fun uploadImage( @Part multipartImage: MultipartBody.Part): Long
 
 }

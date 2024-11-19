@@ -92,7 +92,7 @@ class MatchDataSourceImpl @Inject constructor(
             return chessApiService.postMatch(
                 MatchRequestEntity(
                 challenged = challenged,
-                board = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+                board = "8/PPPPPPPP/8/2k2K2/8/8/pppppppp/8 b - - 0 1")
             )
         } catch (e: Exception) {
             Log.e("MatchDataSource", "Error fetching match by ID: ${e.message}")

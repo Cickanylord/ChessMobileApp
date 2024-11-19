@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.ui.components.BoardScreenContent
@@ -51,23 +52,14 @@ fun OnlineBoardScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize(),
-
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MyTopBar(
             onClick = {onNavigationToProfile(chatState.friend)},
             text = chatState.friend.name,
+            user = chatState.friend
         )
-
         Box(
-            modifier = Modifier
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .clip(RoundedCornerShape(8.dp))
-
 
         ) {
             BoardScreenContent(
