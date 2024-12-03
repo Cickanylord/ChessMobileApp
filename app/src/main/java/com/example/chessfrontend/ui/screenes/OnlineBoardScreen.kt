@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chessfrontend.ui.components.BoardScreenContent
+import com.example.chessfrontend.ui.components.MyTopBar
 import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.ChatAction
 import com.example.chessfrontend.ui.viewmodels.ChatUiState

@@ -52,7 +52,7 @@ state: ProfileUiState,
                 fontSize = MaterialTheme.typography.titleLarge.fontSize * 1.4
             )
             Text(
-                "${state.user.name}@gmial.com",
+                "${state.user.name}@gmail.com",
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize
             )

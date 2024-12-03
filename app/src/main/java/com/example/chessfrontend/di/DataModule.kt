@@ -9,7 +9,7 @@ import com.example.chessfrontend.data.dataSource.interfaces.MatchDataSource
 import com.example.chessfrontend.data.dataSource.MatchDataSourceImpl
 import com.example.chessfrontend.data.dataSource.UserDataSourceImpl
 import com.example.chessfrontend.data.dataSource.interfaces.UserDataSource
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.data.localStorage.UserPreferencesRepositoryImpl
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import dagger.Module
@@ -24,7 +24,7 @@ import javax.inject.Singleton
 object DataModule {
     @Provides
     @Singleton
-    fun provideUserPreferencesRepository(@ApplicationContext context: Context): UserPreferencesRepository {
+    fun provideUserPreferencesRepository(@ApplicationContext context: Context): LocalStorage {
         return UserPreferencesRepositoryImpl(context)
     }
 
@@ -32,11 +32,11 @@ object DataModule {
     @Singleton
     fun provideMatchDataSource(
         chessApiService: ChessApiService,
-        userPreferencesRepository: UserPreferencesRepository
+        localStorage: LocalStorage
     ): MatchDataSource {
         return MatchDataSourceImpl(
             chessApiService = chessApiService,
-            userPreferencesRepository = userPreferencesRepository
+            localStorage = localStorage
         )
     }
 
@@ -44,22 +44,22 @@ object DataModule {
     @Singleton
     fun provideMatchRepository(
         dataSource: MatchDataSource,
-        userPreferencesRepository: UserPreferencesRepository
+        localStorage: LocalStorage
     ): MatchRepository {
         return MatchRepositoryImpl(
             dataSource = dataSource,
-            userPreferencesRepository = userPreferencesRepository
+            localStorage = localStorage
         )
     }
 
     @Provides
     @Singleton
     fun provideUserDataSource(
-        userPreferencesRepository: UserPreferencesRepository,
+        localStorage: LocalStorage,
         chessApiService: ChessApiService
     ): UserDataSource {
         return UserDataSourceImpl(
-            userPreferencesRepository = userPreferencesRepository,
+            localStorage = localStorage,
             chessApiService = chessApiService
         )
     }

@@ -179,7 +179,7 @@ fun ProfileBoxDrawer(
         Spacer(modifier = Modifier.height(3.dp))
 
         Text(
-            text = "ethan@gmail.com",
+             "${user?.name}@gmail.com",
             color = Color.White,
             style = MaterialTheme.typography.titleMedium
         )

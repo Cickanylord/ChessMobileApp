@@ -1,9 +1,8 @@
 package com.example.chessfrontend.ui.viewmodels.gameModes
 
 import ai_engine.board.BoardData
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.ui.model.MatchUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -12,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OfflineBoardViewModelImpl @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val localStorage: LocalStorage
 ): BoardViewModelImpl() {
 
     init {
@@ -21,7 +20,7 @@ class OfflineBoardViewModelImpl @Inject constructor(
 
     override fun loadBoard() {
         viewModelScope.launch {
-            val game = userPreferencesRepository.getOfflineGame().first().let {
+            val game = localStorage.getOfflineGame().first().let {
                 it.ifEmpty { DEFAULT_GAME }
             }
 
@@ -35,7 +34,7 @@ class OfflineBoardViewModelImpl @Inject constructor(
 
     override fun saveGame() {
         viewModelScope.launch {
-            userPreferencesRepository.saveOfflineGame(uiState.board.toString())
+            localStorage.saveOfflineGame(uiState.board.toString())
         }
     }
 }

@@ -6,4 +6,6 @@ interface UserDataSource {
     suspend fun getProfile(): UserEntity
     suspend fun getFriends(): List<UserEntity>
     suspend fun getAllUsers(): List<UserEntity>
+    suspend fun addFriend(id: Long)
+    suspend fun logOut()
 }

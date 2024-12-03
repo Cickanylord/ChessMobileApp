@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
-class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): UserPreferencesRepository {
+class UserPreferencesRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context): LocalStorage {
     private val Context._dataStore: DataStore<Preferences> by preferencesDataStore("APP_PREFERENCES")
 
     override suspend fun storeCredentials(

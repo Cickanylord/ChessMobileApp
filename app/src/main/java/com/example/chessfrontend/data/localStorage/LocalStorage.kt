@@ -5,7 +5,7 @@ import com.example.chessfrontend.data.model.Token
 import com.example.chessfrontend.data.model.UserEntity
 import kotlinx.coroutines.flow.Flow
 
-interface UserPreferencesRepository {
+interface LocalStorage {
     /** user information crud **/
     suspend fun storeCredentials(username: String, password: String, token: String)
     fun getCredentials(): Flow<Credentials>

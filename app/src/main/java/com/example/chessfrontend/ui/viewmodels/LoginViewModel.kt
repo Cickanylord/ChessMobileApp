@@ -6,15 +6,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chessfrontend.data.MatchRepository
+import com.example.chessfrontend.data.UserRepository
 import com.example.chessfrontend.data.model.UserAuth
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.text.contains
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val chessApiService: ChessApiService,
+    private val userRepository: UserRepository,
+    private val matchRepository: MatchRepository
 ) : ViewModel() {
     var uiState by mutableStateOf(LoginUiState())
         private set
@@ -32,10 +37,13 @@ class LoginViewModel @Inject constructor(
 
     private fun login() {
         viewModelScope.launch {
+
             try {
+                setToastMessage("Login successful")
                 val token = chessApiService.authenticate(UserAuth(uiState.userName, uiState.password))
                 logIn()
                 setToken(token.accessToken)
+                toggleToast()
             } catch (e: Exception) {
                 Log.e("Login", "$e")
                 setToastMessage("Login failed")

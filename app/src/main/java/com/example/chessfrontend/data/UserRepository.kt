@@ -12,5 +12,6 @@ interface UserRepository {
     suspend fun getProfile()
     suspend fun getFriends()
     suspend fun getAllUsers()
-
+    suspend fun addFriend(id: Long)
+    suspend fun logOut()
 }

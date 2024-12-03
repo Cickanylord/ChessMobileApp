@@ -110,7 +110,10 @@ fun RegisterScreenContent(
                 )
 
                 Row{
-                    MyClickableText("Login if you already have an account", {})
+                    MyClickableText(
+                        text = "Login if you already have an account",
+                        onClick = { onNavigationToLogin() }
+                    )
                 }
             }
         }

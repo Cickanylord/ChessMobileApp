@@ -116,9 +116,10 @@ class ChatViewModel @Inject constructor(
             //loadMessages(uiState.friend.id)
             val message = Gson().fromJson(text, MessageEntity::class.java).toUiModel()
                 if (message.sender == uiState.friend.id || message.sender == uiState.user.id) {
-                uiState = uiState.copy(
-                    messages = listOf(message) + uiState.messages
-                )
+                    uiState = uiState.copy(
+                        messages = listOf(message) + uiState.messages
+                    )
+
             }
         }
 

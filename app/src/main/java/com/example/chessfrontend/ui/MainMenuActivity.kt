@@ -6,6 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 import androidx.core.view.ViewCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,8 +29,6 @@ class MainMenuActivity : ComponentActivity() {
     @Inject
     lateinit var chessApiService: ChessApiService
 
-
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         enableEdgeToEdge()
@@ -35,8 +37,12 @@ class MainMenuActivity : ComponentActivity() {
 
         setContent {
             ChessFrontEndTheme {
-                MainNavHost()
                 val intent: Intent = Intent(this, MainActivity::class.java)
+                MainNavHost(
+                    onLogOut = {
+                        startActivity(intent)
+                    }
+                )
             }
         }
     }

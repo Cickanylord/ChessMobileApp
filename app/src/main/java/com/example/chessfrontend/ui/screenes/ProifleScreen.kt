@@ -35,7 +35,7 @@ import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.ProfileAction
 import com.example.chessfrontend.ui.viewmodels.ProfileUiState
 import com.example.chessfrontend.ui.viewmodels.ProfileViewModel
-
+import com.example.chessfrontend.util.findPartnerId
 
 
 @Composable

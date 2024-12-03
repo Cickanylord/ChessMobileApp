@@ -37,7 +37,6 @@ class ProfileViewModel @Inject constructor(
     fun handleAction(action: ProfileAction) {
         when (action) {
             is ProfileAction.LoadData -> loadData()
-            is ProfileAction.Logout -> logout()
             is ProfileAction.PostMatch -> postMatch()
         }
     }
@@ -55,9 +54,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun logout(){
-        TODO()
-    }
 
     private fun observeMatches() {
         viewModelScope.launch {
@@ -97,7 +93,6 @@ class ProfileViewModel @Inject constructor(
 
 sealed interface ProfileAction {
     data object LoadData : ProfileAction
-    data object Logout : ProfileAction
     data object PostMatch: ProfileAction
 }
 

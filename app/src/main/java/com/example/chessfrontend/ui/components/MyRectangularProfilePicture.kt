@@ -57,7 +57,7 @@ fun MyRectangularProfilePicture(
 ) {
     val painter: Painter = rememberAsyncImagePainter(
         model = user.profilePicture,
-        placeholder = painterResource(id = R.drawable.blank_profile_picture)
+        fallback = painterResource(id = R.drawable.blank_profile_picture)
     )
 
     Image(

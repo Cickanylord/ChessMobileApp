@@ -1,8 +1,11 @@
 package com.example.chessfrontend.ui.navigation
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -10,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.chessfrontend.MainActivity
 import com.example.chessfrontend.ui.components.BoardScreenRoot
 import com.example.chessfrontend.ui.components.UploadPictureRoot
 import com.example.chessfrontend.ui.screenes.ChatScreenRoot
@@ -38,6 +42,7 @@ private const val profilePictureUploadRoute = "profile_picture_upload"
 
 @Composable
 fun MainNavHost(
+    onLogOut: () -> Unit,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
@@ -55,7 +60,11 @@ fun MainNavHost(
                     navController.navigate("$onlineGameRoute/${match.first}/${match.second}")
                 },
                 onNavigationToOfflineGame = { navController.navigate(offlineGameRoute) },
-                onNavigationToAiGame = { navController.navigate(aiGameRoute) }
+                onNavigationToAiGame = { navController.navigate(aiGameRoute) },
+                onNavigationToAddFriend = { navController.navigate(lisOfUsersRoute) },
+                onLogOut = {
+                    onLogOut()
+                }
             )
         }
 

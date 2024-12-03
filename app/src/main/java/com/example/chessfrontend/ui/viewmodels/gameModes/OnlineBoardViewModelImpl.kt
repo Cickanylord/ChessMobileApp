@@ -2,12 +2,11 @@ package com.example.chessfrontend.ui.viewmodels.gameModes
 
 import ai_engine.board.pieces.PieceFactory
 import ai_engine.board.pieces.enums.PieceName
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.chessfrontend.data.MatchRepository
 import com.example.chessfrontend.data.UserRepository
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.data.model.StepRequestEntity
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.example.chessfrontend.ui.model.toUiModel
@@ -18,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OnlineBoardViewModelImpl @Inject constructor(
     private val chessApiService: ChessApiService,
-    private val userPreferencesRepository: UserPreferencesRepository,
+    private val localStorage: LocalStorage,
     private val matchRepository: MatchRepository,
     private val userRepository: UserRepository,
     savedStateHandle: SavedStateHandle
@@ -34,7 +33,7 @@ class OnlineBoardViewModelImpl @Inject constructor(
                 matchId = matchId
             )
             loadBoard()
-            userPreferencesRepository.saveLasOnlineGame(uiState.matchId)
+            localStorage.saveLasOnlineGame(uiState.matchId)
         }
     }
 

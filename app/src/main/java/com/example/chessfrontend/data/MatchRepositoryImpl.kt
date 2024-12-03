@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chessfrontend.data.dataSource.interfaces.MatchDataSource
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.data.model.MatchEntity
 import com.example.chessfrontend.data.model.StepRequestEntity
 import com.google.gson.Gson
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class MatchRepositoryImpl @Inject constructor(
     private val dataSource: MatchDataSource,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val localStorage: LocalStorage
 ) : MatchRepository  {
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -34,7 +34,7 @@ class MatchRepositoryImpl @Inject constructor(
 
     init {
         repositoryScope.launch {
-            val id = userPreferencesRepository.getUser().first()?.id ?: -1
+            val id = localStorage.getUser().first()?.id ?: -1
             buildWebSocket(id)
             repositoryScope
         }
@@ -72,7 +72,7 @@ class MatchRepositoryImpl @Inject constructor(
 
     override suspend fun reOpenSocket() {
         if(!webSocket.isOpen()) {
-            val id = userPreferencesRepository.getUser().first()?.id ?: -1
+            val id = localStorage.getUser().first()?.id ?: -1
             buildWebSocket(id)
         }
     }
@@ -88,7 +88,7 @@ class MatchRepositoryImpl @Inject constructor(
     }
 
     private fun WebSocket.isOpen(): Boolean {
-        return this.send("ping") // Send a ping message to check if open
+        return this.send("ping")
     }
 
     inner class MatchWebSocketListener : WebSocketListener() {

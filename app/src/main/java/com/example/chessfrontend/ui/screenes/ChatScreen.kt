@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chessfrontend.R
+import com.example.chessfrontend.ui.components.MyTopBar
 import com.example.chessfrontend.ui.model.MessageUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
 import com.example.chessfrontend.ui.viewmodels.ChatAction

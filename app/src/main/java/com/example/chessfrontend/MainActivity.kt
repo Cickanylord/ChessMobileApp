@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.data.model.UserAuth
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.example.chessfrontend.ui.navigation.LoginNavHost
@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
 
     /** data storage **/
     @Inject
-    lateinit var userPreferencesRepository: UserPreferencesRepository
+    lateinit var localStorage: LocalStorage
 
     /** api service **/
     @Inject
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
 
                     /** check if the user is already logged in **/
                     LaunchedEffect (Unit) {
-                        val credentials = userPreferencesRepository
+                        val credentials = localStorage
                             .getCredentials()
                             .first()
 
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                                     password = credentials.password
                                 )
                             )
-                            userPreferencesRepository.refreshToken(token)
+                            localStorage.refreshToken(token)
                             this@MainActivity.startActivity(intent)
 
                         } catch (e: Exception) {
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     /** if the login is successful, store the credentials and start the main menu activity**/
                     if (loginState.isLoggedIn) {
                         LaunchedEffect(Unit) {
-                            userPreferencesRepository.storeCredentials(
+                            localStorage.storeCredentials(
                                 username = loginState.userName,
                                 password = loginState.password,
                                 token = loginState.token

@@ -15,10 +15,10 @@ import androidx.compose.ui.graphics.painter.Painter
 
 @Composable
 fun MyIconButtonWithSmallText(
+    modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
     icon: Painter,
-    modifier: Modifier = Modifier
 ){
     Column(
         modifier = modifier,

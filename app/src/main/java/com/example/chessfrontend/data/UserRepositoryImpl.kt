@@ -44,6 +44,16 @@ class UserRepositoryImpl (
         _users.value = dataSource.getAllUsers()
     }
 
+    override suspend fun addFriend(id: Long) {
+        dataSource.addFriend(id)
+        getProfile()
+        _friends.value = insertUserToList(friends.value ?: listOf(), listOfNotNull( users.value?.find { it.id == id }))
+    }
+
+    override suspend fun logOut() {
+        dataSource.logOut()
+    }
+
     private fun findUserNameById(id: Long): String {
         return combinedUsers.value?.find { it.id == id }?.name ?: "Not Found"
     }

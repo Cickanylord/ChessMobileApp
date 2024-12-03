@@ -2,7 +2,7 @@ package com.example.chessfrontend.data.dataSource
 
 import android.util.Log
 import com.example.chessfrontend.data.dataSource.interfaces.MatchDataSource
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.data.model.MatchEntity
 import com.example.chessfrontend.data.model.MatchRequestEntity
 import com.example.chessfrontend.data.model.StepRequestEntity
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class MatchDataSourceImpl @Inject constructor(
     private val chessApiService: ChessApiService,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val localStorage: LocalStorage
 ): MatchDataSource {
     override suspend fun getMatches(): List<MatchEntity> {
         var matches: List<MatchEntity>
@@ -48,13 +48,13 @@ class MatchDataSourceImpl @Inject constructor(
     override suspend fun getOfflineMatches(): List<MatchEntity> {
         val aiGame = MatchEntity(
             id = -2L,
-            board = userPreferencesRepository
+            board = localStorage
                 .getAiGame()
                 .first()
         )
         val offlineGame = MatchEntity(
             id = -3L,
-            board = userPreferencesRepository
+            board = localStorage
                 .getOfflineGame()
                 .first()
         )
@@ -72,7 +72,7 @@ class MatchDataSourceImpl @Inject constructor(
 
 
     private suspend fun updateMainMenuMatch(matches: List<MatchEntity>) {
-        val mainMenuMatch = userPreferencesRepository
+        val mainMenuMatch = localStorage
             .getLasOnlineGame()
             .first()
 
@@ -83,7 +83,7 @@ class MatchDataSourceImpl @Inject constructor(
         }
 
         matches.firstOrNull { it.isGoing }?.let { ongoingMatch ->
-            userPreferencesRepository.saveLasOnlineGame(ongoingMatch.id)
+            localStorage.saveLasOnlineGame(ongoingMatch.id)
         }
     }
 
@@ -92,7 +92,7 @@ class MatchDataSourceImpl @Inject constructor(
             return chessApiService.postMatch(
                 MatchRequestEntity(
                 challenged = challenged,
-                board = "8/PPPPPPPP/8/2k2K2/8/8/pppppppp/8 b - - 0 1")
+                board = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
             )
         } catch (e: Exception) {
             Log.e("MatchDataSource", "Error fetching match by ID: ${e.message}")

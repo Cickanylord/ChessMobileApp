@@ -43,6 +43,8 @@ class RegisterViewModel @Inject constructor(
                 registered()
             } catch (e: Exception) {
                 Log.e("Register", e.toString())
+                setToastMessage("Registration failed")
+                toggleToast()
             }
         }
     }

@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chessfrontend.data.localStorage.UserPreferencesRepository
+import com.example.chessfrontend.data.localStorage.LocalStorage
 import com.example.chessfrontend.data.netwrok.ChessApiService
 import com.example.chessfrontend.ui.model.MatchUiModel
 import com.example.chessfrontend.ui.model.UserUiModel
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MatchesViewModel @Inject constructor(
     private val chessApiService: ChessApiService,
-    private val userPreferencesRepository: UserPreferencesRepository,
+    private val localStorage: LocalStorage,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var uiState: MatchesUiState by mutableStateOf(MatchesUiState())
@@ -53,7 +53,7 @@ class MatchesViewModel @Inject constructor(
                 val matches = chessApiService.getMatchesBetweenUsers(uiState.partner!!.id)
                 uiState = uiState.copy(
                     matches = matches.map { it.toUiModel() },
-                    user = userPreferencesRepository
+                    user = localStorage
                         .getUser()
                         .first()
                         !!.toUiModel()
